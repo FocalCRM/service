@@ -48,19 +48,19 @@ class DeflectTicketAction
         if (! empty($terms)) {
             $articleQuery->where(function (Builder $builder) use ($terms, $rawQuery): void {
                 // Exact or full string match in title or category
-                $builder->where('title', 'like', "%{$rawQuery}%")
-                    ->orWhere('category', 'like', "%{$rawQuery}%");
+                $builder->whereLike('title', "%{$rawQuery}%")
+                    ->orWhereLike('category', "%{$rawQuery}%");
 
                 // Individual keyword matches
                 foreach ($terms as $term) {
-                    $builder->orWhere('title', 'like', "%{$term}%")
-                        ->orWhere('body', 'like', "%{$term}%");
+                    $builder->orWhereLike('title', "%{$term}%")
+                        ->orWhereLike('body', "%{$term}%");
                 }
             });
         } else {
             $articleQuery->where(function (Builder $builder) use ($rawQuery): void {
-                $builder->where('title', 'like', "%{$rawQuery}%")
-                    ->orWhere('body', 'like', "%{$rawQuery}%");
+                $builder->whereLike('title', "%{$rawQuery}%")
+                    ->orWhereLike('body', "%{$rawQuery}%");
             });
         }
 
