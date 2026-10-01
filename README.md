@@ -37,7 +37,7 @@ The customer support, helpdesk, and SLA orchestration engine for the Focal RevOp
 - **Business-Hours SLA Policies:** Configure tiered response and resolution time commitments by priority (`Urgent`, `High`, `Medium`, `Low`). Supports customizable operating hours (e.g., 9-to-5 weekdays) and holiday calendar pauses.
 - **Automated SLA Breach Watchdog:** Background monitor calculating time-to-first-response and time-to-resolution, dispatching proactive escalation notifications before commitments fail.
 - **Intelligent Ticket Routing:** Automatically assign incoming requests to the best available agent or team using keyword matching, language requirements, customer tier, or round-robin balancing.
-- **Knowledge Base & Deflection Engine:** Deliver customer self-service articles with semantic search. Track deflected ticket counts when articles resolve customer issues prior to submission.
+- **Knowledge Base & Deflection Engine:** Deliver customer self-service articles with keyword search. Track deflected ticket counts when articles resolve customer issues prior to submission.
 - **Customer Self-Service Portal:** Zero-login, tokenized customer portal allowing end-users to check status, review conversations, upload attachments, and post replies securely.
 - **Embeddable Chat & Support Widget (`widget.js`):** Lightweight, zero-dependency JavaScript drawer embeddable on any web property for on-site help, knowledge lookups, and ticket creation.
 - **Thread Merging & Deduplication:** Merge duplicate tickets into a primary thread while preserving all historical messages, attachments, and timestamps.
@@ -164,6 +164,20 @@ FOCAL_SERVICE_ROUTES_ENABLED=true
 ```
 
 Each group also accepts `middleware`. To register the routes yourself, set `routes.enabled` to `false` and define routes with the same names (`focal.help.*`, `focal.support.*`, `focal.service.*`), because models, emails and notifications generate links from those names.
+
+---
+
+## API tokens and rate limits
+
+The inbound email webhook (`POST /api/service/inbound-email`) requires the service API token. Until `FOCAL_SERVICE_API_TOKEN` is set, it responds with `403` and creates no tickets.
+
+```env
+FOCAL_SERVICE_API_TOKEN=   # e.g. php -r "echo bin2hex(random_bytes(32));"
+```
+
+Send it as `Authorization: Bearer <token>`, an `X-Focal-Token` header, or a `?token=<token>` query parameter (for email providers that only accept a webhook URL).
+
+The chat widget, help center votes, knowledge deflection, and support portal submissions stay public and are rate limited per IP (`FOCAL_PUBLIC_RATE_LIMIT`, requests per minute; see `config/focal-core.php`).
 
 ---
 

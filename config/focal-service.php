@@ -62,4 +62,19 @@ return [
             'middleware' => ['web'],
         ],
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | API Token
+    |--------------------------------------------------------------------------
+    |
+    | Shared secret for this package's server-to-server endpoints (webhooks and
+    | sending APIs). Send it as 'Authorization: Bearer <token>', an
+    | 'X-Focal-Token' header, or a '?token=' query parameter. While empty, those
+    | endpoints are disabled. Generate one with: php -r 'echo bin2hex(random_bytes(32));'
+    |
+    */
+    'api' => [
+        'token' => env('FOCAL_SERVICE_API_TOKEN'),
+    ],
 ];
