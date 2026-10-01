@@ -1,5 +1,7 @@
 # Focal Service (`focalcrm/service`)
 
+> This is a read-only split of the [focalcrm/focal](https://github.com/focalcrm/focal) monorepo. Please open issues and pull requests there.
+
 The customer support, helpdesk, and SLA orchestration engine for the Focal RevOps platform. Delivers multi-channel ticketing (Email, Web, Chat, API), business-hours SLA policy enforcement, knowledge deflection, automated ticket routing, thread merging, and an embeddable customer portal.
 
 ---
