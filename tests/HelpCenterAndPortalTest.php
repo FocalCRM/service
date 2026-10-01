@@ -1,0 +1,167 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Focal\Service\Tests;
+
+use Focal\Core\Models\Contact;
+use Focal\Service\Enums\TicketPriority;
+use Focal\Service\Enums\TicketStatus;
+use Focal\Service\Models\KnowledgeArticle;
+use Focal\Service\Models\SlaPolicy;
+use Focal\Service\Models\Ticket;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Tests\TestCase;
+
+class HelpCenterAndPortalTest extends TestCase
+{
+    use RefreshDatabase;
+
+    protected function setUp(): void
+    {
+        parent::setUp();
+        SlaPolicy::create(SlaPolicy::defaultPreset());
+    }
+
+    public function test_can_browse_help_center_and_filter_by_category(): void
+    {
+        KnowledgeArticle::create([
+            'title' => 'Okta SSO Setup Guide',
+            'slug' => 'okta-sso-setup',
+            'category' => 'Authentication',
+            'body' => 'Step by step SAML guide.',
+            'is_published' => true,
+        ]);
+
+        KnowledgeArticle::create([
+            'title' => 'Invoice Payment Methods',
+            'slug' => 'invoice-payment-methods',
+            'category' => 'Billing',
+            'body' => 'Credit card and wire payment options.',
+            'is_published' => true,
+        ]);
+
+        $response = $this->get('/help');
+        $response->assertSuccessful();
+        $response->assertSee('Okta SSO Setup Guide');
+        $response->assertSee('Invoice Payment Methods');
+
+        // Filter by category
+        $filtered = $this->get('/help?category=Authentication');
+        $filtered->assertSuccessful();
+        $filtered->assertSee('Okta SSO Setup Guide');
+        $filtered->assertDontSee('Invoice Payment Methods');
+    }
+
+    public function test_can_read_article_and_submit_helpfulness_vote(): void
+    {
+        $article = KnowledgeArticle::create([
+            'title' => 'Webhooks Integration Walkthrough',
+            'slug' => 'webhooks-integration',
+            'category' => 'API',
+            'body' => 'How to verify HMAC signatures.',
+            'is_published' => true,
+            'views_count' => 0,
+            'helpful_count' => 0,
+        ]);
+
+        $response = $this->get("/help/{$article->slug}");
+        $response->assertSuccessful();
+        $response->assertSee('Webhooks Integration Walkthrough');
+
+        $article->refresh();
+        $this->assertSame(1, $article->views_count);
+
+        // Submit helpful vote
+        $voteResponse = $this->post("/help/{$article->slug}/vote", [
+            'type' => 'helpful',
+        ]);
+        $voteResponse->assertSessionHas('feedback_submitted');
+
+        $article->refresh();
+        $this->assertSame(1, $article->helpful_count);
+    }
+
+    public function test_customer_can_submit_ticket_from_public_portal(): void
+    {
+        $response = $this->get('/support');
+        $response->assertSuccessful();
+        $response->assertSee('Submit a Support Ticket');
+
+        $postResponse = $this->post('/support', [
+            'name' => 'Miles Dyson',
+            'email' => 'miles.dyson@cyberdyne.test',
+            'subject' => 'Cluster sync latency spike',
+            'priority' => 'high',
+            'description' => 'Observed 3000ms latency on deal sync operations.',
+        ]);
+
+        $postResponse->assertSessionHasNoErrors();
+
+        /** @var Ticket $ticket */
+        $ticket = Ticket::where('subject', 'Cluster sync latency spike')->first();
+        $this->assertNotNull($ticket);
+        $this->assertNotNull($ticket->portal_token);
+        $this->assertSame(TicketPriority::High, $ticket->priority);
+
+        // Auto-created Contact
+        $this->assertNotNull($ticket->contact);
+        $this->assertSame('miles.dyson@cyberdyne.test', $ticket->contact->email);
+        $this->assertSame('Miles', $ticket->contact->first_name);
+        $this->assertSame('Dyson', $ticket->contact->last_name);
+
+        $postResponse->assertRedirect("/support/tickets/{$ticket->portal_token}");
+    }
+
+    public function test_customer_can_view_ticket_thread_and_post_reply(): void
+    {
+        $contact = Contact::factory()->create(['first_name' => 'Kyle', 'last_name' => 'Reese']);
+        $ticket = Ticket::create([
+            'subject' => 'Need updated API token',
+            'description' => 'Current token expired.',
+            'status' => TicketStatus::WaitingOnCustomer,
+            'priority' => TicketPriority::Medium,
+            'contact_id' => $contact->id,
+        ]);
+
+        $response = $this->get("/support/tickets/{$ticket->portal_token}");
+        $response->assertSuccessful();
+        $response->assertSee('Need updated API token');
+
+        // Customer posts reply
+        $replyResponse = $this->post("/support/tickets/{$ticket->portal_token}/reply", [
+            'body' => 'I have regenerated the token in settings and confirmed it works now!',
+        ]);
+
+        $replyResponse->assertSessionHasNoErrors();
+        $ticket->refresh();
+
+        $this->assertSame(TicketStatus::Open, $ticket->status);
+        $this->assertCount(1, $ticket->messages);
+        $this->assertSame('I have regenerated the token in settings and confirmed it works now!', $ticket->messages->first()?->body);
+    }
+
+    public function test_customer_can_rate_support_experience_csat(): void
+    {
+        $ticket = Ticket::create([
+            'subject' => 'Billing inquiry',
+            'status' => TicketStatus::Resolved,
+            'priority' => TicketPriority::Low,
+        ]);
+
+        $response = $this->get("/support/rate/{$ticket->portal_token}");
+        $response->assertSuccessful();
+        $response->assertSee('How was our support?');
+
+        $submitResponse = $this->post("/support/rate/{$ticket->portal_token}", [
+            'rating' => 5,
+            'comment' => 'Fast, courteous, and solved on the first touch.',
+        ]);
+
+        $submitResponse->assertSessionHasNoErrors();
+        $ticket->refresh();
+
+        $this->assertSame(5, $ticket->csat_rating);
+        $this->assertSame('Fast, courteous, and solved on the first touch.', $ticket->csat_comment);
+    }
+}
