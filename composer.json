@@ -3,9 +3,24 @@
     "description": "Customer Service, Help Desk, Tickets, SLAs, and Knowledge Base for Focal CRM",
     "type": "library",
     "license": "MIT",
+    "keywords": [
+        "laravel",
+        "crm",
+        "focalcrm",
+        "helpdesk",
+        "tickets",
+        "sla",
+        "knowledge-base"
+    ],
+    "homepage": "https://focalcrm.io",
+    "support": {
+        "issues": "https://github.com/focalcrm/focal/issues",
+        "source": "https://github.com/focalcrm/focal"
+    },
     "authors": [
         {
-            "name": "Focal Team"
+            "name": "CaskStack, LLC",
+            "homepage": "https://focalcrm.io"
         }
     ],
     "require": {
@@ -48,7 +63,7 @@
             ]
         },
         "branch-alias": {
-            "dev-main": "1.x-dev"
+            "dev-main": "0.1.x-dev"
         }
     },
     "config": {
