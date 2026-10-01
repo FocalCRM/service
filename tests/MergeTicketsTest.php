@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Focal\Service\Tests;
 
-use App\Models\User;
 use Focal\Core\Models\Contact;
 use Focal\Service\Actions\MergeTicketsAction;
 use Focal\Service\Enums\MessageSenderType;
@@ -12,9 +11,9 @@ use Focal\Service\Enums\TicketPriority;
 use Focal\Service\Enums\TicketStatus;
 use Focal\Service\Models\Ticket;
 use Focal\Service\Models\TicketMessage;
+use Focal\Service\Tests\Fixtures\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use InvalidArgumentException;
-use Tests\TestCase;
 
 class MergeTicketsTest extends TestCase
 {

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Focal\Service\Tests;
 
-use App\Models\User;
 use Focal\Core\Models\Contact;
 use Focal\Service\Actions\CheckSlaBreachesAction;
 use Focal\Service\Actions\CreateTicketAction;
@@ -18,9 +17,9 @@ use Focal\Service\Notifications\SlaBreachAlertNotification;
 use Focal\Service\Notifications\TicketCreatedNotification;
 use Focal\Service\Notifications\TicketRepliedNotification;
 use Focal\Service\Notifications\TicketResolvedCsatNotification;
+use Focal\Service\Tests\Fixtures\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
-use Tests\TestCase;
 
 class TicketNotificationsTest extends TestCase
 {

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Focal\Service\Tests;
 
-use App\Models\User;
 use Focal\Core\Enums\ActivityType;
 use Focal\Core\Models\Activity;
 use Focal\Core\Models\Contact;
@@ -17,8 +16,8 @@ use Focal\Service\Enums\TicketStatus;
 use Focal\Service\Models\CannedResponse;
 use Focal\Service\Models\SlaPolicy;
 use Focal\Service\Models\Ticket;
+use Focal\Service\Tests\Fixtures\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
 class ServiceHardeningTest extends TestCase
 {

@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Focal\Service\Tests;
 
-use App\Models\User;
 use Focal\Service\Actions\CreateTicketAction;
 use Focal\Service\Actions\RouteTicketAction;
 use Focal\Service\Enums\TicketPriority;
@@ -12,8 +11,8 @@ use Focal\Service\Enums\TicketSource;
 use Focal\Service\Enums\TicketStatus;
 use Focal\Service\Models\Ticket;
 use Focal\Service\Models\TicketRoutingRule;
+use Focal\Service\Tests\Fixtures\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
 class TicketRoutingTest extends TestCase
 {

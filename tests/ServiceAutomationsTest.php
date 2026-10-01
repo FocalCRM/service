@@ -8,7 +8,6 @@ use Focal\Service\Actions\RunServiceAutomationsAction;
 use Focal\Service\Enums\TicketStatus;
 use Focal\Service\Models\Ticket;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
 class ServiceAutomationsTest extends TestCase
 {

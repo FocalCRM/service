@@ -10,7 +10,6 @@ use Focal\Service\Enums\TicketSource;
 use Focal\Service\Enums\TicketStatus;
 use Focal\Service\Models\Ticket;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
 class ChatWidgetTest extends TestCase
 {

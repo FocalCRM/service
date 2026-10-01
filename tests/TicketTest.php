@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Focal\Service\Tests;
 
-use App\Models\User;
 use Focal\Core\Models\Company;
 use Focal\Core\Models\Contact;
 use Focal\Service\Actions\CreateTicketAction;
@@ -16,8 +15,8 @@ use Focal\Service\Enums\TicketSource;
 use Focal\Service\Enums\TicketStatus;
 use Focal\Service\Models\SlaPolicy;
 use Focal\Service\Models\Ticket;
+use Focal\Service\Tests\Fixtures\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
 class TicketTest extends TestCase
 {

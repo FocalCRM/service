@@ -7,7 +7,6 @@ namespace Focal\Service\Tests;
 use Focal\Service\Actions\DeflectTicketAction;
 use Focal\Service\Models\KnowledgeArticle;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 
 class KnowledgeDeflectionTest extends TestCase
 {
