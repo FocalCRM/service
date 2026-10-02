@@ -6,6 +6,7 @@ namespace Focal\Service\Notifications;
 
 use Focal\Service\Models\Ticket;
 use Focal\Service\Models\TicketMessage;
+use Focal\Service\Notifications\Concerns\SetsTicketMessageId;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -14,6 +15,7 @@ use Illuminate\Support\Str;
 class TicketRepliedNotification extends Notification
 {
     use Queueable;
+    use SetsTicketMessageId;
 
     public function __construct(
         public Ticket $ticket,
@@ -33,7 +35,7 @@ class TicketRepliedNotification extends Notification
         $subject = "[#{$this->ticket->ticket_number}] Re: {$this->ticket->subject}";
         $preview = Str::limit(strip_tags($this->message->body), 500);
 
-        return (new MailMessage)
+        return $this->withTicketMessageId(new MailMessage, $this->ticket)
             ->subject($subject)
             ->greeting('Hello,')
             ->line('A support agent has posted an update on your ticket:')

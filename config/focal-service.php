@@ -77,4 +77,20 @@ return [
     'api' => [
         'token' => env('FOCAL_SERVICE_API_TOKEN'),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Inbound Email
+    |--------------------------------------------------------------------------
+    |
+    | A reply is threaded onto an existing ticket only when it carries that
+    | ticket's portal token and comes from the ticket's contact. When
+    | require_authenticated_sender is true, the webhook request must also say
+    | the sender passed authentication ('sender_authenticated' true, or
+    | 'dmarc' set to 'pass'); otherwise the email opens a new ticket.
+    |
+    */
+    'inbound_email' => [
+        'require_authenticated_sender' => (bool) env('FOCAL_SERVICE_INBOUND_REQUIRE_AUTH', false),
+    ],
 ];

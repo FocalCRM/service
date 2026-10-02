@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Focal\Service\Notifications;
 
 use Focal\Service\Models\Ticket;
+use Focal\Service\Notifications\Concerns\SetsTicketMessageId;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -12,6 +13,7 @@ use Illuminate\Notifications\Notification;
 class TicketCreatedNotification extends Notification
 {
     use Queueable;
+    use SetsTicketMessageId;
 
     public function __construct(public Ticket $ticket) {}
 
@@ -27,7 +29,7 @@ class TicketCreatedNotification extends Notification
     {
         $subject = "[#{$this->ticket->ticket_number}] Support Request Received: {$this->ticket->subject}";
 
-        return (new MailMessage)
+        return $this->withTicketMessageId(new MailMessage, $this->ticket)
             ->subject($subject)
             ->greeting('Hello,')
             ->line('Thank you for contacting customer support. We have received your request and our team is actively reviewing it.')

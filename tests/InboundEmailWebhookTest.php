@@ -54,7 +54,7 @@ class InboundEmailWebhookTest extends TestCase
         $this->assertSame('Getting 403 Forbidden when clicking on Quarterly Reports.', $ticket->messages->first()?->body);
     }
 
-    public function test_inbound_email_with_ticket_number_in_subject_appends_to_existing_conversation(): void
+    public function test_inbound_email_replying_to_a_ticket_message_id_appends_to_existing_conversation(): void
     {
         $contact = Contact::factory()->create([
             'email' => 'techlead@client.test',
@@ -73,6 +73,7 @@ class InboundEmailWebhookTest extends TestCase
             'from' => 'Alex Smith <techlead@client.test>',
             'subject' => 'Re: [#TICK-2026-ABCD] SAML Metadata expired',
             'body' => 'Here is the renewed certificate attachment: SHA-256 cert renewed until 2028.',
+            'In-Reply-To' => "<ticket.{$ticket->portal_token}.0a1b2c3d4e5f6a7b@crm.example.com>",
         ];
 
         $response = $this->postJson('/api/service/inbound-email', $payload);
@@ -143,6 +144,7 @@ class InboundEmailWebhookTest extends TestCase
             'from' => 'Owner < owner@CLIENT.test >',
             'subject' => 'Re: [#TICK-2026-CASE1] Export failing',
             'body' => 'Still failing.',
+            'References' => "<ticket.{$ticket->portal_token}.0a1b2c3d4e5f6a7b@crm.example.com>",
         ]);
 
         $response->assertOk()->assertJson(['status' => 'appended', 'ticket_number' => 'TICK-2026-CASE1']);
@@ -189,7 +191,7 @@ class InboundEmailWebhookTest extends TestCase
         $this->assertCount(0, $ticket->messages()->get());
     }
 
-    public function test_inbound_email_matches_ticket_numbers_case_insensitively_against_the_configured_prefix(): void
+    public function test_inbound_email_does_not_thread_by_ticket_number_alone_whatever_the_prefix_or_case(): void
     {
         config(['focal-service.defaults.prefix' => 'Acme']);
 
@@ -203,21 +205,15 @@ class InboundEmailWebhookTest extends TestCase
 
         $this->assertStringStartsWith('Acme-', $ticket->ticket_number);
 
-        $response = $this->postJson('/api/service/inbound-email', [
-            'from' => 'ops@client.test',
-            'subject' => 'Re: ['.strtolower($ticket->ticket_number).'] Sync stalled',
-            'body' => 'Any update?',
-        ]);
+        foreach ([strtolower($ticket->ticket_number), $ticket->ticket_number] as $number) {
+            $this->postJson('/api/service/inbound-email', [
+                'from' => 'ops@client.test',
+                'subject' => "Re: [{$number}] Sync stalled",
+                'body' => "Any update on {$number}?",
+                'In-Reply-To' => "<{$number}@mail.focal.test>",
+            ])->assertStatus(201)->assertJsonPath('status', 'created');
+        }
 
-        $response->assertOk()->assertJson(['status' => 'appended', 'ticket_number' => $ticket->ticket_number]);
-
-        $strangerResponse = $this->postJson('/api/service/inbound-email', [
-            'from' => 'stranger@else.test',
-            'subject' => 'Re: ['.strtoupper($ticket->ticket_number).'] Sync stalled',
-            'body' => 'Any update?',
-        ]);
-
-        $strangerResponse->assertStatus(201)->assertJsonPath('status', 'created');
-        $this->assertSame(1, $ticket->messages()->count());
+        $this->assertSame(0, $ticket->messages()->count());
     }
 }

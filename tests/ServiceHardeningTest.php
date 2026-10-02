@@ -53,7 +53,7 @@ class ServiceHardeningTest extends TestCase
         $this->assertNull($freshTicket->resolved_at);
     }
 
-    public function test_inbound_email_webhook_with_custom_prefix_and_headers_threads_to_existing_ticket(): void
+    public function test_inbound_email_webhook_with_custom_prefix_threads_by_portal_token_not_ticket_number(): void
     {
         config(['focal-service.defaults.prefix' => 'SRV']);
 
@@ -66,33 +66,37 @@ class ServiceHardeningTest extends TestCase
             'priority' => TicketPriority::Medium,
             'source' => TicketSource::Email,
             'contact_id' => $contact->id,
-            'portal_token' => 'unique-portal-token-for-srv-9999-testing',
         ]);
 
-        // Inbound reply with custom prefix in subject
-        $payload = [
+        // The custom-prefix ticket number alone (subject or In-Reply-To) no longer threads.
+        $numberOnly = $this->postJson(route('focal.service.inbound-email'), [
             'from' => 'Jane Client <billing@client.com>',
             'subject' => 'Re: [SRV-2026-9999] Invoice discrepancy March',
             'body' => 'Here is the attached wire receipt.',
-        ];
+            'In-Reply-To' => '<SRV-2026-9999@mail.focal.crm>',
+        ]);
+        $numberOnly->assertCreated()->assertJsonPath('status', 'created');
+        $this->assertSame(0, $ticket->messages()->count());
 
-        $response = $this->postJson(route('focal.service.inbound-email'), $payload);
+        // The portal link in the body threads.
+        $response = $this->postJson(route('focal.service.inbound-email'), [
+            'from' => 'Jane Client <billing@client.com>',
+            'subject' => 'Re: [SRV-2026-9999] Invoice discrepancy March',
+            'body' => "Here is the attached wire receipt.\n\n> {$ticket->getPortalUrl()}",
+        ]);
         $response->assertOk()
             ->assertJsonPath('status', 'appended')
             ->assertJsonPath('ticket_number', 'SRV-2026-9999');
 
-        $this->assertSame(TicketStatus::Open, $ticket->fresh()->status);
-        $this->assertSame(1, $ticket->messages()->where('body', 'Here is the attached wire receipt.')->count());
+        $this->assertSame(TicketStatus::Open, $ticket->fresh()?->status);
 
-        // Inbound reply where subject was stripped but In-Reply-To header contains ticket number
-        $headerPayload = [
+        // A ticket Message-ID in In-Reply-To threads with the subject stripped.
+        $headerResponse = $this->postJson(route('focal.service.inbound-email'), [
             'from' => 'Jane Client <billing@client.com>',
             'subject' => 'Re: Quick Question',
             'body' => 'Also sending our tax ID.',
-            'In-Reply-To' => '<SRV-2026-9999@mail.focal.crm>',
-        ];
-
-        $headerResponse = $this->postJson(route('focal.service.inbound-email'), $headerPayload);
+            'In-Reply-To' => "<ticket.{$ticket->portal_token}.0a1b2c3d4e5f6a7b@mail.focal.crm>",
+        ]);
         $headerResponse->assertOk()
             ->assertJsonPath('status', 'appended')
             ->assertJsonPath('ticket_number', 'SRV-2026-9999');

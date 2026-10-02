@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Focal\Service\Notifications;
 
 use Focal\Service\Models\Ticket;
+use Focal\Service\Notifications\Concerns\SetsTicketMessageId;
 use Illuminate\Bus\Queueable;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
@@ -12,6 +13,7 @@ use Illuminate\Notifications\Notification;
 class TicketResolvedCsatNotification extends Notification
 {
     use Queueable;
+    use SetsTicketMessageId;
 
     public function __construct(
         public Ticket $ticket,
@@ -30,7 +32,7 @@ class TicketResolvedCsatNotification extends Notification
     {
         $subject = "[#{$this->ticket->ticket_number}] Resolved: {$this->ticket->subject}";
 
-        $mail = (new MailMessage)
+        $mail = $this->withTicketMessageId(new MailMessage, $this->ticket)
             ->subject($subject)
             ->greeting('Hello,')
             ->line('Your support ticket has been marked as resolved by our customer care team.')
