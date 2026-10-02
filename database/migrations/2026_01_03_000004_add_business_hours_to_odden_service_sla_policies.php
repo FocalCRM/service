@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $table = config('focal-service.tables.sla_policies', 'focal_service_sla_policies');
+        $table = config('odden-service.tables.sla_policies', 'odden_service_sla_policies');
 
         if (Schema::hasTable($table) && ! Schema::hasColumn($table, 'only_business_hours')) {
             Schema::table($table, function (Blueprint $table): void {
@@ -32,7 +32,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        $table = config('focal-service.tables.sla_policies', 'focal_service_sla_policies');
+        $table = config('odden-service.tables.sla_policies', 'odden_service_sla_policies');
 
         if (Schema::hasTable($table) && Schema::hasColumn($table, 'only_business_hours')) {
             Schema::table($table, function (Blueprint $table): void {

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Actions;
+namespace Odden\Service\Actions;
 
-use Focal\Service\Enums\MessageSenderType;
-use Focal\Service\Enums\TicketPriority;
-use Focal\Service\Enums\TicketStatus;
-use Focal\Service\Models\Ticket;
-use Focal\Service\Notifications\SlaBreachAlertNotification;
+use Odden\Service\Enums\MessageSenderType;
+use Odden\Service\Enums\TicketPriority;
+use Odden\Service\Enums\TicketStatus;
+use Odden\Service\Models\Ticket;
+use Odden\Service\Notifications\SlaBreachAlertNotification;
 use Illuminate\Database\Eloquent\Collection;
 
 class CheckSlaBreachesAction

@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Tests;
+namespace Odden\Service\Tests;
 
-use Focal\Core\Models\Company;
-use Focal\Core\Models\Contact;
-use Focal\Service\Actions\CreateTicketAction;
-use Focal\Service\Actions\ReplyTicketAction;
-use Focal\Service\Actions\ResolveTicketAction;
-use Focal\Service\Enums\MessageSenderType;
-use Focal\Service\Enums\TicketPriority;
-use Focal\Service\Enums\TicketSource;
-use Focal\Service\Enums\TicketStatus;
-use Focal\Service\Models\SlaPolicy;
-use Focal\Service\Models\Ticket;
-use Focal\Service\Tests\Fixtures\User;
+use Odden\Core\Models\Company;
+use Odden\Core\Models\Contact;
+use Odden\Service\Actions\CreateTicketAction;
+use Odden\Service\Actions\ReplyTicketAction;
+use Odden\Service\Actions\ResolveTicketAction;
+use Odden\Service\Enums\MessageSenderType;
+use Odden\Service\Enums\TicketPriority;
+use Odden\Service\Enums\TicketSource;
+use Odden\Service\Enums\TicketStatus;
+use Odden\Service\Models\SlaPolicy;
+use Odden\Service\Models\Ticket;
+use Odden\Service\Tests\Fixtures\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class TicketTest extends TestCase

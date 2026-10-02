@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Tests;
+namespace Odden\Service\Tests;
 
-use Focal\Core\Models\Contact;
-use Focal\Service\Actions\CreateTicketAction;
-use Focal\Service\Actions\ReplyTicketAction;
-use Focal\Service\Actions\ResolveTicketAction;
-use Focal\Service\Enums\MessageSenderType;
-use Focal\Service\Enums\TicketStatus;
-use Focal\Service\Models\SlaPolicy;
-use Focal\Service\Models\Ticket;
-use Focal\Service\Tests\Fixtures\User;
+use Odden\Core\Models\Contact;
+use Odden\Service\Actions\CreateTicketAction;
+use Odden\Service\Actions\ReplyTicketAction;
+use Odden\Service\Actions\ResolveTicketAction;
+use Odden\Service\Enums\MessageSenderType;
+use Odden\Service\Enums\TicketStatus;
+use Odden\Service\Models\SlaPolicy;
+use Odden\Service\Models\Ticket;
+use Odden\Service\Tests\Fixtures\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Mail\Transport\ArrayTransport;
 use Illuminate\Support\Facades\Mail;
@@ -38,8 +38,8 @@ class InboundEmailThreadingTest extends TestCase
             'from' => 'Alex Smith <alex@client.test>',
             'subject' => 'Re: [#TICK-2026-ABCD] SAML metadata expired',
             'body' => 'Following up on TICK-2026-ABCD.',
-            'In-Reply-To' => '<TICK-2026-ABCD@mail.focal.test>',
-            'References' => '<TICK-2026-ABCD@mail.focal.test>',
+            'In-Reply-To' => '<TICK-2026-ABCD@mail.odden.test>',
+            'References' => '<TICK-2026-ABCD@mail.odden.test>',
         ]);
 
         $response->assertStatus(201)->assertJsonPath('status', 'created');
@@ -204,7 +204,7 @@ class InboundEmailThreadingTest extends TestCase
 
     public function test_require_authenticated_sender_blocks_threading_without_a_passing_verdict(): void
     {
-        config(['focal-service.inbound_email.require_authenticated_sender' => true]);
+        config(['odden-service.inbound_email.require_authenticated_sender' => true]);
 
         [, $ticket] = $this->ticketFor('dana@client.test');
         $payload = [

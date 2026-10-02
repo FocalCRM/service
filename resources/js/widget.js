@@ -1,18 +1,18 @@
 (function () {
     'use strict';
 
-    if (window.FocalChatWidgetLoaded) return;
-    window.FocalChatWidgetLoaded = true;
+    if (window.OddenChatWidgetLoaded) return;
+    window.OddenChatWidgetLoaded = true;
 
-    const STORAGE_KEY = 'focal_support_chat_token';
-    // Full base URL of the focalcrm/service chat API, including any configured prefix
+    const STORAGE_KEY = 'odden_support_chat_token';
+    // Full base URL of the getodden/crm-service chat API, including any configured prefix
     // (e.g. "https://crm.example.com/api/service"). Defaults to the same-origin default path.
-    const API_BASE = (window.FOCAL_CHAT_API_URL || '/api/service').replace(/\/+$/, '');
+    const API_BASE = (window.ODDEN_CHAT_API_URL || '/api/service').replace(/\/+$/, '');
 
     // Inject styles
     const style = document.createElement('style');
     style.textContent = `
-        .focal-chat-launcher {
+        .odden-chat-launcher {
             position: fixed;
             bottom: 24px;
             right: 24px;
@@ -31,11 +31,11 @@
             border: none;
             outline: none;
         }
-        .focal-chat-launcher:hover {
+        .odden-chat-launcher:hover {
             transform: scale(1.08) translateY(-2px);
             box-shadow: 0 20px 30px -10px rgba(79, 70, 229, 0.5);
         }
-        .focal-chat-window {
+        .odden-chat-window {
             position: fixed;
             bottom: 96px;
             right: 24px;
@@ -56,12 +56,12 @@
             pointer-events: none;
             transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .focal-chat-window.open {
+        .odden-chat-window.open {
             opacity: 1;
             transform: translateY(0) scale(1);
             pointer-events: auto;
         }
-        .focal-chat-header {
+        .odden-chat-header {
             background: #4f46e5;
             color: #ffffff;
             padding: 18px 20px;
@@ -69,7 +69,7 @@
             align-items: center;
             justify-content: space-between;
         }
-        .focal-chat-header-title {
+        .odden-chat-header-title {
             font-weight: 700;
             font-size: 15px;
             letter-spacing: -0.01em;
@@ -77,7 +77,7 @@
             align-items: center;
             gap: 8px;
         }
-        .focal-chat-status-dot {
+        .odden-chat-status-dot {
             width: 8px;
             height: 8px;
             background: #10b981;
@@ -85,7 +85,7 @@
             display: inline-block;
             box-shadow: 0 0 0 2px rgba(255,255,255,0.3);
         }
-        .focal-chat-close-btn {
+        .odden-chat-close-btn {
             background: rgba(255, 255, 255, 0.15);
             border: none;
             color: #ffffff;
@@ -99,10 +99,10 @@
             justify-content: center;
             transition: background 0.2s;
         }
-        .focal-chat-close-btn:hover {
+        .odden-chat-close-btn:hover {
             background: rgba(255, 255, 255, 0.3);
         }
-        .focal-chat-body {
+        .odden-chat-body {
             flex: 1;
             padding: 16px;
             overflow-y: auto;
@@ -111,7 +111,7 @@
             flex-direction: column;
             gap: 12px;
         }
-        .focal-msg {
+        .odden-msg {
             max-width: 82%;
             padding: 10px 14px;
             border-radius: 14px;
@@ -119,13 +119,13 @@
             line-height: 1.45;
             word-break: break-word;
         }
-        .focal-msg-customer {
+        .odden-msg-customer {
             align-self: flex-end;
             background: #4f46e5;
             color: #ffffff;
             border-bottom-right-radius: 3px;
         }
-        .focal-msg-agent, .focal-msg-system {
+        .odden-msg-agent, .odden-msg-system {
             align-self: flex-start;
             background: #ffffff;
             color: #1e293b;
@@ -133,26 +133,26 @@
             border-bottom-left-radius: 3px;
             box-shadow: 0 1px 3px rgba(0,0,0,0.03);
         }
-        .focal-msg-sender {
+        .odden-msg-sender {
             font-size: 10.5px;
             font-weight: 600;
             margin-bottom: 4px;
             opacity: 0.75;
         }
-        .focal-msg-time {
+        .odden-msg-time {
             font-size: 10px;
             opacity: 0.65;
             margin-top: 4px;
             text-align: right;
         }
-        .focal-chat-footer {
+        .odden-chat-footer {
             padding: 12px;
             background: #ffffff;
             border-top: 1px solid #f1f5f9;
             display: flex;
             gap: 8px;
         }
-        .focal-chat-input {
+        .odden-chat-input {
             flex: 1;
             padding: 10px 14px;
             border: 1px solid #e2e8f0;
@@ -161,10 +161,10 @@
             outline: none;
             transition: border-color 0.2s;
         }
-        .focal-chat-input:focus {
+        .odden-chat-input:focus {
             border-color: #4f46e5;
         }
-        .focal-chat-send-btn {
+        .odden-chat-send-btn {
             background: #4f46e5;
             color: #ffffff;
             border: none;
@@ -175,28 +175,28 @@
             cursor: pointer;
             transition: background 0.2s;
         }
-        .focal-chat-send-btn:hover {
+        .odden-chat-send-btn:hover {
             background: #4338ca;
         }
-        .focal-chat-form {
+        .odden-chat-form {
             display: flex;
             flex-direction: column;
             gap: 12px;
             padding: 10px;
         }
-        .focal-form-field {
+        .odden-form-field {
             display: flex;
             flex-direction: column;
             gap: 4px;
         }
-        .focal-form-label {
+        .odden-form-label {
             font-size: 11px;
             font-weight: 700;
             color: #475569;
             text-transform: uppercase;
             letter-spacing: 0.04em;
         }
-        .focal-form-input, .focal-form-textarea {
+        .odden-form-input, .odden-form-textarea {
             width: 100%;
             padding: 9px 12px;
             border: 1px solid #cbd5e1;
@@ -205,7 +205,7 @@
             box-sizing: border-box;
             outline: none;
         }
-        .focal-form-input:focus, .focal-form-textarea:focus {
+        .odden-form-input:focus, .odden-form-textarea:focus {
             border-color: #4f46e5;
         }
     `;
@@ -213,7 +213,7 @@
 
     // Create Launcher Button
     const launcher = document.createElement('button');
-    launcher.className = 'focal-chat-launcher';
+    launcher.className = 'odden-chat-launcher';
     launcher.setAttribute('aria-label', 'Open Support Chat');
     launcher.innerHTML = `
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
@@ -224,21 +224,21 @@
 
     // Create Chat Window
     const chatWindow = document.createElement('div');
-    chatWindow.className = 'focal-chat-window';
+    chatWindow.className = 'odden-chat-window';
     chatWindow.innerHTML = `
-        <div class="focal-chat-header">
-            <div class="focal-chat-header-title">
-                <span class="focal-chat-status-dot"></span>
+        <div class="odden-chat-header">
+            <div class="odden-chat-header-title">
+                <span class="odden-chat-status-dot"></span>
                 <span>Support Team</span>
             </div>
-            <button class="focal-chat-close-btn" aria-label="Close Chat">&times;</button>
+            <button class="odden-chat-close-btn" aria-label="Close Chat">&times;</button>
         </div>
-        <div class="focal-chat-body" id="focal-chat-messages">
+        <div class="odden-chat-body" id="odden-chat-messages">
             <!-- Messages or form rendered here -->
         </div>
-        <div class="focal-chat-footer" id="focal-chat-footer" style="display: none;">
-            <input type="text" class="focal-chat-input" id="focal-chat-input" placeholder="Type your reply..." />
-            <button class="focal-chat-send-btn" id="focal-chat-send-btn">Send</button>
+        <div class="odden-chat-footer" id="odden-chat-footer" style="display: none;">
+            <input type="text" class="odden-chat-input" id="odden-chat-input" placeholder="Type your reply..." />
+            <button class="odden-chat-send-btn" id="odden-chat-send-btn">Send</button>
         </div>
     `;
     document.body.appendChild(chatWindow);
@@ -247,11 +247,11 @@
     let pollInterval = null;
     let currentToken = localStorage.getItem(STORAGE_KEY);
 
-    const closeBtn = chatWindow.querySelector('.focal-chat-close-btn');
-    const messagesContainer = chatWindow.querySelector('#focal-chat-messages');
-    const footer = chatWindow.querySelector('#focal-chat-footer');
-    const input = chatWindow.querySelector('#focal-chat-input');
-    const sendBtn = chatWindow.querySelector('#focal-chat-send-btn');
+    const closeBtn = chatWindow.querySelector('.odden-chat-close-btn');
+    const messagesContainer = chatWindow.querySelector('#odden-chat-messages');
+    const footer = chatWindow.querySelector('#odden-chat-footer');
+    const input = chatWindow.querySelector('#odden-chat-input');
+    const sendBtn = chatWindow.querySelector('#odden-chat-send-btn');
 
     function toggleChat() {
         isOpen = !isOpen;
@@ -278,42 +278,42 @@
     function renderStartForm() {
         footer.style.display = 'none';
         messagesContainer.innerHTML = `
-            <div class="focal-chat-form">
+            <div class="odden-chat-form">
                 <div style="margin-bottom: 6px;">
                     <h3 style="margin: 0 0 4px 0; font-size: 15px; font-weight: 700; color: #0f172a;">Chat with Support</h3>
                     <p style="margin: 0; font-size: 12.5px; color: #64748b;">We're online and ready to help answer questions.</p>
                 </div>
-                <div class="focal-form-field">
-                    <label class="focal-form-label">Full Name</label>
-                    <input type="text" id="focal-form-name" class="focal-form-input" placeholder="e.g. Jane Doe" required />
+                <div class="odden-form-field">
+                    <label class="odden-form-label">Full Name</label>
+                    <input type="text" id="odden-form-name" class="odden-form-input" placeholder="e.g. Jane Doe" required />
                 </div>
-                <div class="focal-form-field">
-                    <label class="focal-form-label">Email Address</label>
-                    <input type="email" id="focal-form-email" class="focal-form-input" placeholder="jane@example.com" required />
+                <div class="odden-form-field">
+                    <label class="odden-form-label">Email Address</label>
+                    <input type="email" id="odden-form-email" class="odden-form-input" placeholder="jane@example.com" required />
                 </div>
-                <div class="focal-form-field">
-                    <label class="focal-form-label">Company (Optional)</label>
-                    <input type="text" id="focal-form-company" class="focal-form-input" placeholder="Acme Corp" />
+                <div class="odden-form-field">
+                    <label class="odden-form-label">Company (Optional)</label>
+                    <input type="text" id="odden-form-company" class="odden-form-input" placeholder="Acme Corp" />
                 </div>
-                <div class="focal-form-field">
-                    <label class="focal-form-label">How can we help?</label>
-                    <textarea id="focal-form-msg" class="focal-form-textarea" rows="3" placeholder="Describe what you need..." required></textarea>
+                <div class="odden-form-field">
+                    <label class="odden-form-label">How can we help?</label>
+                    <textarea id="odden-form-msg" class="odden-form-textarea" rows="3" placeholder="Describe what you need..." required></textarea>
                 </div>
-                <button type="button" id="focal-form-submit" class="focal-chat-send-btn" style="padding: 11px; margin-top: 4px; font-size: 14px;">
+                <button type="button" id="odden-form-submit" class="odden-chat-send-btn" style="padding: 11px; margin-top: 4px; font-size: 14px;">
                     Start Conversation
                 </button>
             </div>
         `;
 
-        const submitBtn = messagesContainer.querySelector('#focal-form-submit');
+        const submitBtn = messagesContainer.querySelector('#odden-form-submit');
         submitBtn.addEventListener('click', startConversation);
     }
 
     function startConversation() {
-        const name = messagesContainer.querySelector('#focal-form-name').value.trim();
-        const email = messagesContainer.querySelector('#focal-form-email').value.trim();
-        const company = messagesContainer.querySelector('#focal-form-company').value.trim();
-        const message = messagesContainer.querySelector('#focal-form-msg').value.trim();
+        const name = messagesContainer.querySelector('#odden-form-name').value.trim();
+        const email = messagesContainer.querySelector('#odden-form-email').value.trim();
+        const company = messagesContainer.querySelector('#odden-form-company').value.trim();
+        const message = messagesContainer.querySelector('#odden-form-msg').value.trim();
 
         if (!name || !email || !message) {
             alert('Please fill out name, email, and message.');
@@ -362,17 +362,17 @@
         // Build nodes with textContent so sender names, bodies and timestamps are never parsed as HTML.
         messagesContainer.replaceChildren(...msgs.map(m => {
             const msg = document.createElement('div');
-            msg.className = 'focal-msg ' + (m.is_customer ? 'focal-msg-customer' : 'focal-msg-agent');
+            msg.className = 'odden-msg ' + (m.is_customer ? 'odden-msg-customer' : 'odden-msg-agent');
 
             const sender = document.createElement('div');
-            sender.className = 'focal-msg-sender';
+            sender.className = 'odden-msg-sender';
             sender.textContent = m.sender_name;
 
             const body = document.createElement('div');
             body.textContent = m.body;
 
             const time = document.createElement('div');
-            time.className = 'focal-msg-time';
+            time.className = 'odden-msg-time';
             time.textContent = m.created_at;
 
             msg.append(sender, body, time);
@@ -409,7 +409,7 @@
     // and the customer carries on by email.
     function showMergedNotice(text) {
         const notice = document.createElement('div');
-        notice.className = 'focal-msg focal-msg-agent';
+        notice.className = 'odden-msg odden-msg-agent';
         notice.textContent = text || 'This conversation has moved. Please check your email.';
         messagesContainer.append(notice);
         messagesContainer.scrollTop = messagesContainer.scrollHeight;

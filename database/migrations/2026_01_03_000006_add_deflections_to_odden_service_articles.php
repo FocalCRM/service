@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $articlesTable = config('focal-service.tables.articles', 'focal_service_articles');
+        $articlesTable = config('odden-service.tables.articles', 'odden_service_articles');
 
         Schema::table($articlesTable, function (Blueprint $table): void {
             $table->unsignedInteger('deflections_count')->default(0)->after('not_helpful_count');
@@ -25,7 +25,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        $articlesTable = config('focal-service.tables.articles', 'focal_service_articles');
+        $articlesTable = config('odden-service.tables.articles', 'odden_service_articles');
 
         Schema::table($articlesTable, function (Blueprint $table): void {
             $table->dropColumn('deflections_count');

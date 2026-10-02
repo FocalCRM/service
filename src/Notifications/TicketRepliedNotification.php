@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Notifications;
+namespace Odden\Service\Notifications;
 
-use Focal\Service\Models\Ticket;
-use Focal\Service\Models\TicketMessage;
-use Focal\Service\Notifications\Concerns\SetsTicketMessageId;
-use Focal\Service\Notifications\Concerns\UsesServiceNotificationQueue;
+use Odden\Service\Models\Ticket;
+use Odden\Service\Models\TicketMessage;
+use Odden\Service\Notifications\Concerns\SetsTicketMessageId;
+use Odden\Service\Notifications\Concerns\UsesServiceNotificationQueue;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;

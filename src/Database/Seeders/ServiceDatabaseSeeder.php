@@ -2,20 +2,20 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Database\Seeders;
+namespace Odden\Service\Database\Seeders;
 
-use Focal\Core\Models\Company;
-use Focal\Core\Models\Contact;
-use Focal\Core\Support\UserModel;
-use Focal\Service\Enums\MessageSenderType;
-use Focal\Service\Enums\TicketPriority;
-use Focal\Service\Enums\TicketSource;
-use Focal\Service\Enums\TicketStatus;
-use Focal\Service\Models\CannedResponse;
-use Focal\Service\Models\KnowledgeArticle;
-use Focal\Service\Models\SlaPolicy;
-use Focal\Service\Models\Ticket;
-use Focal\Service\Models\TicketRoutingRule;
+use Odden\Core\Models\Company;
+use Odden\Core\Models\Contact;
+use Odden\Core\Support\UserModel;
+use Odden\Service\Enums\MessageSenderType;
+use Odden\Service\Enums\TicketPriority;
+use Odden\Service\Enums\TicketSource;
+use Odden\Service\Enums\TicketStatus;
+use Odden\Service\Models\CannedResponse;
+use Odden\Service\Models\KnowledgeArticle;
+use Odden\Service\Models\SlaPolicy;
+use Odden\Service\Models\Ticket;
+use Odden\Service\Models\TicketRoutingRule;
 use Illuminate\Database\Seeder;
 
 class ServiceDatabaseSeeder extends Seeder
@@ -27,17 +27,17 @@ class ServiceDatabaseSeeder extends Seeder
     {
         // 1. Support Agents
         $admin = UserModel::query()->firstOrCreate(
-            ['email' => 'admin@focal.test'],
-            ['name' => 'Focal Admin', 'password' => bcrypt('password')]
+            ['email' => 'admin@odden.test'],
+            ['name' => 'Odden Admin', 'password' => bcrypt('password')]
         );
 
         $agentAlex = UserModel::query()->firstOrCreate(
-            ['email' => 'alex.mercer@focal.test'],
+            ['email' => 'alex.mercer@odden.test'],
             ['name' => 'Alex Mercer', 'password' => bcrypt('password')]
         );
 
         $agentBeth = UserModel::query()->firstOrCreate(
-            ['email' => 'beth.caldwell@focal.test'],
+            ['email' => 'beth.caldwell@odden.test'],
             ['name' => 'Beth Caldwell', 'password' => bcrypt('password')]
         );
 
@@ -70,7 +70,7 @@ class ServiceDatabaseSeeder extends Seeder
                 'title' => 'Configuring Google Workspace & Okta SAML 2.0 Single Sign-On',
                 'slug' => 'configuring-saml-sso',
                 'category' => 'Authentication',
-                'body' => "## Single Sign-On Configuration Guide\n\nFocal supports standards-compliant SAML 2.0 identity providers.\n\n### Step 1: Obtain IdP Metadata\n1. In your Identity Provider (Okta, Google Workspace, Azure AD), create a new SAML App.\n2. Set ACS URL to `https://app.focal.test/auth/saml/callback`.\n3. Download the XML Metadata file.\n\n### Step 2: Configure Focal Settings\nUpload your Identity Provider metadata in **Settings -> Security -> SAML 2.0**.",
+                'body' => "## Single Sign-On Configuration Guide\n\nOdden supports standards-compliant SAML 2.0 identity providers.\n\n### Step 1: Obtain IdP Metadata\n1. In your Identity Provider (Okta, Google Workspace, Azure AD), create a new SAML App.\n2. Set ACS URL to `https://app.odden.test/auth/saml/callback`.\n3. Download the XML Metadata file.\n\n### Step 2: Configure Odden Settings\nUpload your Identity Provider metadata in **Settings -> Security -> SAML 2.0**.",
                 'is_published' => true,
                 'views_count' => 142,
                 'helpful_count' => 28,
@@ -81,7 +81,7 @@ class ServiceDatabaseSeeder extends Seeder
                 'title' => 'Understanding Your Invoices and Seat Tier Breakdown',
                 'slug' => 'invoicing-seat-tiers',
                 'category' => 'Billing',
-                'body' => "## Billing & Seat Allocation\n\nFocal charges based on assigned user seats. Active reps who have access to Deals and Cockpit count towards your licensed seat threshold.\n\n- Invoices generate on the 1st of each calendar month.\n- Prorated seat additions are calculated automatically upon user invitation.",
+                'body' => "## Billing & Seat Allocation\n\nOdden charges based on assigned user seats. Active reps who have access to Deals and Cockpit count towards your licensed seat threshold.\n\n- Invoices generate on the 1st of each calendar month.\n- Prorated seat additions are calculated automatically upon user invitation.",
                 'is_published' => true,
                 'views_count' => 89,
                 'helpful_count' => 15,
@@ -92,7 +92,7 @@ class ServiceDatabaseSeeder extends Seeder
                 'title' => 'Setting Up Inbound Webhooks & HMAC Signature Verification',
                 'slug' => 'webhooks-signature-verification',
                 'category' => 'API & Integrations',
-                'body' => "## Webhook Endpoints\n\nAll outbound webhooks from Focal include a `X-Focal-Signature` header computed with HMAC-SHA256.\n\n```python\n# Python verification snippet\nimport hmac, hashlib\nexpected = hmac.new(webhook_secret, payload, hashlib.sha256).hexdigest()\n```",
+                'body' => "## Webhook Endpoints\n\nAll outbound webhooks from Odden include a `X-Odden-Signature` header computed with HMAC-SHA256.\n\n```python\n# Python verification snippet\nimport hmac, hashlib\nexpected = hmac.new(webhook_secret, payload, hashlib.sha256).hexdigest()\n```",
                 'is_published' => true,
                 'views_count' => 210,
                 'helpful_count' => 45,
@@ -103,7 +103,7 @@ class ServiceDatabaseSeeder extends Seeder
                 'title' => 'Managing Team Permissions and Role-Based Access Control',
                 'slug' => 'team-permissions-rbac',
                 'category' => 'Administration',
-                'body' => "## RBAC Overview\n\nFocal provides granular role definitions across Sales Reps, Support Specialists, and Global Admins. Team Scoping restricts pipeline visibility to your regional business unit.",
+                'body' => "## RBAC Overview\n\nOdden provides granular role definitions across Sales Reps, Support Specialists, and Global Admins. Team Scoping restricts pipeline visibility to your regional business unit.",
                 'is_published' => true,
                 'views_count' => 64,
                 'helpful_count' => 11,
@@ -122,7 +122,7 @@ class ServiceDatabaseSeeder extends Seeder
                 'title' => 'Request Diagnostics & Browser Info',
                 'shortcut' => '!moreinfo',
                 'category' => 'Troubleshooting',
-                'content' => "Hi there,\n\nThank you for reaching out to Focal Support. To help us reproduce and resolve this quickly, could you please provide:\n1. Your browser name and version\n2. A screenshot or screen recording of the error\n3. The exact URL where the issue occurred\n\nThank you!\nSupport Team",
+                'content' => "Hi there,\n\nThank you for reaching out to Odden Support. To help us reproduce and resolve this quickly, could you please provide:\n1. Your browser name and version\n2. A screenshot or screen recording of the error\n3. The exact URL where the issue occurred\n\nThank you!\nSupport Team",
                 'user_id' => $agentAlex->getKey(),
                 'is_shared' => true,
             ],
@@ -130,7 +130,7 @@ class ServiceDatabaseSeeder extends Seeder
                 'title' => 'Issue Resolved Confirmation',
                 'shortcut' => '!resolved',
                 'category' => 'Resolution',
-                'content' => "Hi there,\n\nWe have verified that this issue has been resolved. Please refresh your browser and test again.\n\nIf you experience any further trouble, simply reply to this email to reopen your ticket.\n\nBest regards,\nFocal Support",
+                'content' => "Hi there,\n\nWe have verified that this issue has been resolved. Please refresh your browser and test again.\n\nIf you experience any further trouble, simply reply to this email to reopen your ticket.\n\nBest regards,\nOdden Support",
                 'user_id' => $agentAlex->getKey(),
                 'is_shared' => true,
             ],
@@ -190,7 +190,7 @@ class ServiceDatabaseSeeder extends Seeder
             ['ticket_number' => 'TICK-2026-0002'],
             [
                 'subject' => 'SAML 2.0 SSO Redirect Loop on Login',
-                'description' => 'Users get stuck looping between Okta authentication and the Focal login screen.',
+                'description' => 'Users get stuck looping between Okta authentication and the Odden login screen.',
                 'status' => TicketStatus::Open,
                 'priority' => TicketPriority::High,
                 'source' => TicketSource::Email,
@@ -220,7 +220,7 @@ class ServiceDatabaseSeeder extends Seeder
             ]);
 
             $ticket2->messages()->create([
-                'body' => 'Hi, thanks for reaching out. Could you please check if your Okta Application entity ID is configured with `https://app.focal.test`?',
+                'body' => 'Hi, thanks for reaching out. Could you please check if your Okta Application entity ID is configured with `https://app.odden.test`?',
                 'sender_type' => MessageSenderType::Agent->value,
                 'user_id' => $agentBeth->getKey(),
                 'is_internal_note' => false,

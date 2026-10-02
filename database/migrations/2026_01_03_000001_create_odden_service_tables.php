@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-use Focal\Core\Support\UserModel;
+use Odden\Core\Support\UserModel;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,14 +14,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $slaTable = config('focal-service.tables.sla_policies', 'focal_service_sla_policies');
-        $ticketsTable = config('focal-service.tables.tickets', 'focal_service_tickets');
-        $messagesTable = config('focal-service.tables.messages', 'focal_service_ticket_messages');
-        $articlesTable = config('focal-service.tables.articles', 'focal_service_articles');
-        $cannedResponsesTable = config('focal-service.tables.canned_responses', 'focal_service_canned_responses');
+        $slaTable = config('odden-service.tables.sla_policies', 'odden_service_sla_policies');
+        $ticketsTable = config('odden-service.tables.tickets', 'odden_service_tickets');
+        $messagesTable = config('odden-service.tables.messages', 'odden_service_ticket_messages');
+        $articlesTable = config('odden-service.tables.articles', 'odden_service_articles');
+        $cannedResponsesTable = config('odden-service.tables.canned_responses', 'odden_service_canned_responses');
 
-        $contactsTable = config('focal-core.tables.contacts', 'focal_contacts');
-        $companiesTable = config('focal-core.tables.companies', 'focal_companies');
+        $contactsTable = config('odden-core.tables.contacts', 'odden_contacts');
+        $companiesTable = config('odden-core.tables.companies', 'odden_companies');
 
         // 1. SLA Policies Table
         Schema::create($slaTable, function (Blueprint $table): void {
@@ -124,10 +124,10 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists(config('focal-service.tables.canned_responses', 'focal_service_canned_responses'));
-        Schema::dropIfExists(config('focal-service.tables.articles', 'focal_service_articles'));
-        Schema::dropIfExists(config('focal-service.tables.messages', 'focal_service_ticket_messages'));
-        Schema::dropIfExists(config('focal-service.tables.tickets', 'focal_service_tickets'));
-        Schema::dropIfExists(config('focal-service.tables.sla_policies', 'focal_service_sla_policies'));
+        Schema::dropIfExists(config('odden-service.tables.canned_responses', 'odden_service_canned_responses'));
+        Schema::dropIfExists(config('odden-service.tables.articles', 'odden_service_articles'));
+        Schema::dropIfExists(config('odden-service.tables.messages', 'odden_service_ticket_messages'));
+        Schema::dropIfExists(config('odden-service.tables.tickets', 'odden_service_tickets'));
+        Schema::dropIfExists(config('odden-service.tables.sla_policies', 'odden_service_sla_policies'));
     }
 };

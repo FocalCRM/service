@@ -2,15 +2,15 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Http\Controllers;
+namespace Odden\Service\Http\Controllers;
 
-use Focal\Core\Support\ContactLookup;
-use Focal\Service\Actions\CreateTicketAction;
-use Focal\Service\Actions\ReplyTicketAction;
-use Focal\Service\Enums\MessageSenderType;
-use Focal\Service\Enums\TicketPriority;
-use Focal\Service\Enums\TicketSource;
-use Focal\Service\Models\Ticket;
+use Odden\Core\Support\ContactLookup;
+use Odden\Service\Actions\CreateTicketAction;
+use Odden\Service\Actions\ReplyTicketAction;
+use Odden\Service\Enums\MessageSenderType;
+use Odden\Service\Enums\TicketPriority;
+use Odden\Service\Enums\TicketSource;
+use Odden\Service\Models\Ticket;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -23,7 +23,7 @@ class SupportPortalController extends Controller
      */
     public function create(): View
     {
-        return view('focal-service::portal.create');
+        return view('odden-service::portal.create');
     }
 
     /**
@@ -60,7 +60,7 @@ class SupportPortalController extends Controller
         );
 
         return redirect()
-            ->route('focal.support.show', ['token' => $ticket->portal_token])
+            ->route('odden.support.show', ['token' => $ticket->portal_token])
             ->with('status', 'Your support ticket has been received. Our team will review it shortly.');
     }
 
@@ -75,7 +75,7 @@ class SupportPortalController extends Controller
             ->with(['messages.user', 'messages.contact', 'contact', 'company'])
             ->firstOrFail();
 
-        return view('focal-service::portal.show', [
+        return view('odden-service::portal.show', [
             'ticket' => $ticket,
         ]);
     }
@@ -134,7 +134,7 @@ class SupportPortalController extends Controller
             ->where('portal_token', $token)
             ->firstOrFail();
 
-        return view('focal-service::portal.rate', [
+        return view('odden-service::portal.rate', [
             'ticket' => $ticket,
         ]);
     }
@@ -182,7 +182,7 @@ class SupportPortalController extends Controller
         }
 
         return redirect()
-            ->route('focal.support.show', ['token' => $ticket->portal_token])
+            ->route('odden.support.show', ['token' => $ticket->portal_token])
             ->with('status', 'Thank you! Your feedback has been recorded.');
     }
 }

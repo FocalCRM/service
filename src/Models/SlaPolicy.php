@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Models;
+namespace Odden\Service\Models;
 
 use Carbon\CarbonInterface;
-use Focal\Service\Enums\TicketPriority;
+use Odden\Service\Enums\TicketPriority;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -68,7 +68,7 @@ class SlaPolicy extends Model
      */
     public function getTable(): string
     {
-        return config('focal-service.tables.sla_policies', 'focal_service_sla_policies');
+        return config('odden-service.tables.sla_policies', 'odden_service_sla_policies');
     }
 
     /**

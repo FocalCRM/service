@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Models;
+namespace Odden\Service\Models;
 
 use Carbon\CarbonInterface;
-use Focal\Core\Support\UserModel;
+use Odden\Core\Support\UserModel;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -42,7 +42,7 @@ class CannedResponse extends Model
      */
     public function getTable(): string
     {
-        return config('focal-service.tables.canned_responses', 'focal_service_canned_responses');
+        return config('odden-service.tables.canned_responses', 'odden_service_canned_responses');
     }
 
     /**

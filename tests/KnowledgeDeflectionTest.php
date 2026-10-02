@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Tests;
+namespace Odden\Service\Tests;
 
-use Focal\Service\Actions\DeflectTicketAction;
-use Focal\Service\Models\KnowledgeArticle;
+use Odden\Service\Actions\DeflectTicketAction;
+use Odden\Service\Models\KnowledgeArticle;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class KnowledgeDeflectionTest extends TestCase
@@ -60,7 +60,7 @@ class KnowledgeDeflectionTest extends TestCase
             'helpful_count' => 10,
         ]);
 
-        $response = $this->getJson(route('focal.service.knowledge.suggest', ['q' => 'SMTP DNS configuration']));
+        $response = $this->getJson(route('odden.service.knowledge.suggest', ['q' => 'SMTP DNS configuration']));
 
         $response->assertOk()
             ->assertJsonPath('count', 1)
@@ -75,12 +75,12 @@ class KnowledgeDeflectionTest extends TestCase
             'title' => 'Connecting Your Slack Workspace',
             'slug' => 'connecting-slack-workspace',
             'category' => 'Integrations',
-            'body' => 'Install the Focal Slack app from the integrations directory.',
+            'body' => 'Install the Odden Slack app from the integrations directory.',
             'is_published' => true,
             'deflections_count' => 2,
         ]);
 
-        $response = $this->postJson(route('focal.service.knowledge.deflect'), [
+        $response = $this->postJson(route('odden.service.knowledge.deflect'), [
             'article_id' => $article->id,
         ]);
 
@@ -102,7 +102,7 @@ class KnowledgeDeflectionTest extends TestCase
             'is_published' => true,
         ]);
 
-        $response = $this->getJson(route('focal.service.knowledge.suggest', ['q' => 'webhook']));
+        $response = $this->getJson(route('odden.service.knowledge.suggest', ['q' => 'webhook']));
 
         $url = (string) $response->assertOk()->json('data.0.url');
         $this->assertStringNotContainsString('"', $url);

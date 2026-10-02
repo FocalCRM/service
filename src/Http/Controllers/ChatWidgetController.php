@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Http\Controllers;
+namespace Odden\Service\Http\Controllers;
 
-use Focal\Core\Models\Company;
-use Focal\Core\Support\ContactLookup;
-use Focal\Service\Actions\CreateTicketAction;
-use Focal\Service\Actions\ReplyTicketAction;
-use Focal\Service\Enums\MessageSenderType;
-use Focal\Service\Enums\TicketPriority;
-use Focal\Service\Enums\TicketSource;
-use Focal\Service\Models\Ticket;
-use Focal\Service\Models\TicketMessage;
+use Odden\Core\Models\Company;
+use Odden\Core\Support\ContactLookup;
+use Odden\Service\Actions\CreateTicketAction;
+use Odden\Service\Actions\ReplyTicketAction;
+use Odden\Service\Enums\MessageSenderType;
+use Odden\Service\Enums\TicketPriority;
+use Odden\Service\Enums\TicketSource;
+use Odden\Service\Models\Ticket;
+use Odden\Service\Models\TicketMessage;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -29,7 +29,7 @@ class ChatWidgetController extends Controller
      *
      * The ticket is created by CreateTicketAction like every other channel: routing rules run,
      * and a task is logged on the contact's timeline. The confirmation email (with the portal
-     * link) is only sent when focal-service.chat.confirmation_email is true: this endpoint is
+     * link) is only sent when odden-service.chat.confirmation_email is true: this endpoint is
      * public and never verifies the email address, so by default it emails nobody.
      */
     public function start(Request $request, CreateTicketAction $createAction): JsonResponse
@@ -71,7 +71,7 @@ class ChatWidgetController extends Controller
             source: TicketSource::Chat,
             contact: $contact,
             company: $company,
-            notifyContact: (bool) config('focal-service.chat.confirmation_email', false),
+            notifyContact: (bool) config('odden-service.chat.confirmation_email', false),
         );
 
         // Automated welcoming response from support team
@@ -92,7 +92,7 @@ class ChatWidgetController extends Controller
      * Send a customer follow-up message in an ongoing chat session.
      *
      * Goes through ReplyTicketAction, so a resolved or closed ticket reopens when
-     * focal-service.reopen_on_customer_reply is on. A chat session never follows a merge: the
+     * odden-service.reopen_on_customer_reply is on. A chat session never follows a merge: the
      * chat's email address was never verified, so once its ticket is merged the session is
      * read-only and the customer is pointed at their email (409, merged: true).
      */

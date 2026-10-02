@@ -1,8 +1,8 @@
-# Focal Service (`focalcrm/service`)
+# Odden Service (`getodden/crm-service`)
 
-> This is a read-only split of the [focalcrm/focal](https://github.com/focalcrm/focal) monorepo. Please open issues and pull requests there.
+> This is a read-only split of the [getodden/crm](https://github.com/getodden/crm) monorepo. Please open issues and pull requests there.
 
-The customer support, helpdesk, and SLA orchestration engine for the Focal RevOps platform. Delivers multi-channel ticketing (Email, Web, Chat, API), business-hours SLA policy enforcement, knowledge deflection, automated ticket routing, thread merging, and an embeddable customer portal.
+The customer support, helpdesk, and SLA orchestration engine for the Odden RevOps platform. Delivers multi-channel ticketing (Email, Web, Chat, API), business-hours SLA policy enforcement, knowledge deflection, automated ticket routing, thread merging, and an embeddable customer portal.
 
 ---
 
@@ -10,7 +10,7 @@ The customer support, helpdesk, and SLA orchestration engine for the Focal RevOp
 
 ```
 +-------------------------------------------------------------------------+
-|                               FOCAL SERVICE                             |
+|                               ODDEN SERVICE                             |
 |                                                                         |
 |  +--------------------+   +--------------------+   +-----------------+  |
 |  | Multi-Channel      |   | Inbound Webhooks & |   | Embeddable Help |  |
@@ -48,14 +48,14 @@ The customer support, helpdesk, and SLA orchestration engine for the Focal RevOp
 ## Installation
 
 ```bash
-composer require focalcrm/service
+composer require getodden/crm-service
 ```
 
 Publish configuration and migrations:
 
 ```bash
-php artisan vendor:publish --tag=focal-service-migrations
-php artisan vendor:publish --tag=focal-service-config
+php artisan vendor:publish --tag=odden-service-migrations
+php artisan vendor:publish --tag=odden-service-config
 ```
 
 Run migrations:
@@ -71,9 +71,9 @@ php artisan migrate
 ### 1. Creating a Ticket with SLA Assignment
 
 ```php
-use Focal\Service\Actions\CreateTicketAction;
-use Focal\Service\Enums\TicketPriority;
-use Focal\Service\Enums\TicketSource;
+use Odden\Service\Actions\CreateTicketAction;
+use Odden\Service\Enums\TicketPriority;
+use Odden\Service\Enums\TicketSource;
 
 $ticket = app(CreateTicketAction::class)->execute([
     'contact_id' => $contact->id,
@@ -90,8 +90,8 @@ echo "First response due: " . $ticket->first_response_due_at->toIso8601String();
 ### 2. Replying to a Ticket (Public Message vs. Private Note)
 
 ```php
-use Focal\Service\Actions\ReplyTicketAction;
-use Focal\Service\Enums\MessageSenderType;
+use Odden\Service\Actions\ReplyTicketAction;
+use Odden\Service\Enums\MessageSenderType;
 
 // Public response to customer (stops SLA first-response clock)
 app(ReplyTicketAction::class)->execute(
@@ -115,7 +115,7 @@ app(ReplyTicketAction::class)->execute(
 ### 3. Merging Duplicate Tickets
 
 ```php
-use Focal\Service\Actions\MergeTicketsAction;
+use Odden\Service\Actions\MergeTicketsAction;
 
 // Merges $duplicateTicket into $primaryTicket, moving all messages and closing the duplicate
 app(MergeTicketsAction::class)->execute(
@@ -128,13 +128,13 @@ app(MergeTicketsAction::class)->execute(
 ### 4. Running SLA Breach Audits
 
 ```php
-use Focal\Service\Actions\CheckSlaBreachesAction;
+use Odden\Service\Actions\CheckSlaBreachesAction;
 
 // Identified tickets nearing or past breach deadline; dispatches SlaBreachAlertNotification
 $breachedTickets = app(CheckSlaBreachesAction::class)->execute();
 
 // Or run via Artisan in cron:
-// php artisan focal:service-check-sla
+// php artisan odden:service-check-sla
 ```
 
 ### 5. Embedding the Help Widget
@@ -143,9 +143,9 @@ Point the widget at the chat API base URL, including any configured prefix (defa
 
 ```html
 <script>
-    window.FOCAL_CHAT_API_URL = 'https://crm.yourcompany.com/api/service';
+    window.ODDEN_CHAT_API_URL = 'https://crm.yourcompany.com/api/service';
 </script>
-<script src="/js/focal-chat-widget.js" async></script>
+<script src="/js/odden-chat-widget.js" async></script>
 ```
 
 ---
@@ -154,30 +154,30 @@ Point the widget at the chat API base URL, including any configured prefix (defa
 
 The help center (`/help`) and support portal (`/support`) are registered in the `web` group with no prefix by default. The inbound email webhook, knowledge deflection and chat widget APIs are registered in the `api` group under `/api/service`.
 
-Configure them in `config/focal-service.php` (publish with `php artisan vendor:publish --tag=focal-service-config`) or through environment variables:
+Configure them in `config/odden-service.php` (publish with `php artisan vendor:publish --tag=odden-service-config`) or through environment variables:
 
 ```env
-FOCAL_SERVICE_PREFIX=care               # /help becomes /care/help
-FOCAL_SERVICE_API_PREFIX=api/service
-FOCAL_SERVICE_DOMAIN=support.example.com # optional, applies to both groups
-FOCAL_SERVICE_ROUTES_ENABLED=true
+ODDEN_SERVICE_PREFIX=care               # /help becomes /care/help
+ODDEN_SERVICE_API_PREFIX=api/service
+ODDEN_SERVICE_DOMAIN=support.example.com # optional, applies to both groups
+ODDEN_SERVICE_ROUTES_ENABLED=true
 ```
 
-Each group also accepts `middleware`. To register the routes yourself, set `routes.enabled` to `false` and define routes with the same names (`focal.help.*`, `focal.support.*`, `focal.service.*`), because models, emails and notifications generate links from those names.
+Each group also accepts `middleware`. To register the routes yourself, set `routes.enabled` to `false` and define routes with the same names (`odden.help.*`, `odden.support.*`, `odden.service.*`), because models, emails and notifications generate links from those names.
 
 ---
 
 ## API tokens and rate limits
 
-The inbound email webhook (`POST /api/service/inbound-email`) requires the service API token. Until `FOCAL_SERVICE_API_TOKEN` is set, it responds with `403` and creates no tickets.
+The inbound email webhook (`POST /api/service/inbound-email`) requires the service API token. Until `ODDEN_SERVICE_API_TOKEN` is set, it responds with `403` and creates no tickets.
 
 ```env
-FOCAL_SERVICE_API_TOKEN=   # e.g. php -r "echo bin2hex(random_bytes(32));"
+ODDEN_SERVICE_API_TOKEN=   # e.g. php -r "echo bin2hex(random_bytes(32));"
 ```
 
-Send it as `Authorization: Bearer <token>`, an `X-Focal-Token` header, or a `?token=<token>` query parameter (for email providers that only accept a webhook URL).
+Send it as `Authorization: Bearer <token>`, an `X-Odden-Token` header, or a `?token=<token>` query parameter (for email providers that only accept a webhook URL).
 
-The chat widget, help center votes, knowledge deflection, and support portal submissions stay public and are rate limited per IP (`FOCAL_PUBLIC_RATE_LIMIT`, requests per minute; see `config/focal-core.php`).
+The chat widget, help center votes, knowledge deflection, and support portal submissions stay public and are rate limited per IP (`ODDEN_PUBLIC_RATE_LIMIT`, requests per minute; see `config/odden-core.php`).
 
 ---
 

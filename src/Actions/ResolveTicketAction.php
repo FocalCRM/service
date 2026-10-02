@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Actions;
+namespace Odden\Service\Actions;
 
-use Focal\Service\Models\Ticket;
-use Focal\Service\Notifications\TicketResolvedCsatNotification;
+use Odden\Service\Models\Ticket;
+use Odden\Service\Notifications\TicketResolvedCsatNotification;
 
 class ResolveTicketAction
 {

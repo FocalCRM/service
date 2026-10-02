@@ -2,18 +2,18 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Tests;
+namespace Odden\Service\Tests;
 
-use Focal\Core\Models\Contact;
-use Focal\Service\Actions\CreateTicketAction;
-use Focal\Service\Actions\ReplyTicketAction;
-use Focal\Service\Enums\MessageSenderType;
-use Focal\Service\Models\Ticket;
-use Focal\Service\Notifications\SlaBreachAlertNotification;
-use Focal\Service\Notifications\TicketCreatedNotification;
-use Focal\Service\Notifications\TicketRepliedNotification;
-use Focal\Service\Notifications\TicketResolvedCsatNotification;
-use Focal\Service\Tests\Fixtures\User;
+use Odden\Core\Models\Contact;
+use Odden\Service\Actions\CreateTicketAction;
+use Odden\Service\Actions\ReplyTicketAction;
+use Odden\Service\Enums\MessageSenderType;
+use Odden\Service\Models\Ticket;
+use Odden\Service\Notifications\SlaBreachAlertNotification;
+use Odden\Service\Notifications\TicketCreatedNotification;
+use Odden\Service\Notifications\TicketRepliedNotification;
+use Odden\Service\Notifications\TicketResolvedCsatNotification;
+use Odden\Service\Tests\Fixtures\User;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Mail\Transport\ArrayTransport;
@@ -50,8 +50,8 @@ class QueuedTicketNotificationsTest extends TestCase
     public function test_queue_and_connection_come_from_config(): void
     {
         config([
-            'focal-service.notifications.queue' => 'support-mail',
-            'focal-service.notifications.connection' => 'database',
+            'odden-service.notifications.queue' => 'support-mail',
+            'odden-service.notifications.connection' => 'database',
         ]);
 
         $notification = new TicketCreatedNotification(Ticket::create(['subject' => 'Queue me']));
@@ -71,7 +71,7 @@ class QueuedTicketNotificationsTest extends TestCase
 
     public function test_creating_a_ticket_pushes_the_confirmation_to_the_configured_queue(): void
     {
-        config(['focal-service.notifications.queue' => 'support-mail']);
+        config(['odden-service.notifications.queue' => 'support-mail']);
         Queue::fake();
 
         $contact = Contact::factory()->create(['email' => 'dana@client.test']);

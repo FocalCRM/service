@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Tests;
+namespace Odden\Service\Tests;
 
-use Focal\Service\Models\CannedResponse;
-use Focal\Service\Tests\Fixtures\User;
+use Odden\Service\Models\CannedResponse;
+use Odden\Service\Tests\Fixtures\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class CannedResponseTest extends TestCase

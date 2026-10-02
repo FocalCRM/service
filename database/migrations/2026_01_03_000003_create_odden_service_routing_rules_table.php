@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $table = config('focal-service.tables.routing_rules', 'focal_service_routing_rules');
+        $table = config('odden-service.tables.routing_rules', 'odden_service_routing_rules');
 
         if (! Schema::hasTable($table)) {
             Schema::create($table, function (Blueprint $table): void {
@@ -34,7 +34,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        $table = config('focal-service.tables.routing_rules', 'focal_service_routing_rules');
+        $table = config('odden-service.tables.routing_rules', 'odden_service_routing_rules');
         Schema::dropIfExists($table);
     }
 };

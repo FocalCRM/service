@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Actions;
+namespace Odden\Service\Actions;
 
-use Focal\Service\Models\KnowledgeArticle;
+use Odden\Service\Models\KnowledgeArticle;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
@@ -77,7 +77,7 @@ class DeflectTicketAction
                 'excerpt' => Str::limit(strip_tags($article->body), 140),
                 'helpful_count' => $article->helpful_count,
                 'deflections_count' => $article->deflections_count,
-                'url' => route('focal.help.show', $article->slug),
+                'url' => route('odden.help.show', $article->slug),
             ]);
     }
 }

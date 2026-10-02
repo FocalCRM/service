@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Tests;
+namespace Odden\Service\Tests;
 
-use Focal\Service\Models\SlaPolicy;
-use Focal\Service\Models\Ticket;
+use Odden\Service\Models\SlaPolicy;
+use Odden\Service\Models\Ticket;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ApiSecurityTest extends TestCase
@@ -30,19 +30,19 @@ class ApiSecurityTest extends TestCase
 
     public function test_inbound_email_webhook_is_disabled_until_a_token_is_configured(): void
     {
-        config(['focal-service.api.token' => null]);
+        config(['odden-service.api.token' => null]);
 
         $this->postJson('/api/service/inbound-email', ['from' => 'a@example.com', 'subject' => 'x', 'body' => 'y'])->assertForbidden();
     }
 
     public function test_chat_widget_is_rate_limited(): void
     {
-        config(['focal-core.rate_limits.public' => 1]);
+        config(['odden-core.rate_limits.public' => 1]);
         $this->flushHeaders();
 
-        $first = $this->postJson(route('focal.service.chat.start'), ['email' => 'visitor@example.com', 'message' => 'Hi']);
+        $first = $this->postJson(route('odden.service.chat.start'), ['email' => 'visitor@example.com', 'message' => 'Hi']);
 
         $this->assertNotSame(429, $first->status());
-        $this->postJson(route('focal.service.chat.start'), ['email' => 'visitor@example.com', 'message' => 'Hi'])->assertTooManyRequests();
+        $this->postJson(route('odden.service.chat.start'), ['email' => 'visitor@example.com', 'message' => 'Hi'])->assertTooManyRequests();
     }
 }

@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Actions;
+namespace Odden\Service\Actions;
 
-use Focal\Core\Models\Contact;
-use Focal\Service\Enums\MessageSenderType;
-use Focal\Service\Models\Ticket;
-use Focal\Service\Models\TicketMessage;
-use Focal\Service\Notifications\TicketRepliedNotification;
+use Odden\Core\Models\Contact;
+use Odden\Service\Enums\MessageSenderType;
+use Odden\Service\Models\Ticket;
+use Odden\Service\Models\TicketMessage;
+use Odden\Service\Notifications\TicketRepliedNotification;
 use Illuminate\Database\Eloquent\Model;
 
 class ReplyTicketAction
@@ -18,7 +18,7 @@ class ReplyTicketAction
      *
      * A public customer reply to a ticket that was merged into another is posted on the primary
      * ticket instead (following the whole merge chain; see Ticket::mergeTarget()), and a customer
-     * reply reopens a resolved or closed ticket when focal-service.reopen_on_customer_reply is
+     * reply reopens a resolved or closed ticket when odden-service.reopen_on_customer_reply is
      * on. Check who may reply against the ticket the customer referenced before calling this.
      * The returned message's ticket_id says which ticket the reply landed on.
      *

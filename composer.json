@@ -1,31 +1,31 @@
 {
-    "name": "focalcrm/service",
-    "description": "Customer Service, Help Desk, Tickets, SLAs, and Knowledge Base for Focal CRM",
+    "name": "getodden/crm-service",
+    "description": "Customer Service, Help Desk, Tickets, SLAs, and Knowledge Base for Odden CRM",
     "type": "library",
     "license": "MIT",
     "keywords": [
         "laravel",
         "crm",
-        "focalcrm",
+        "getodden",
         "helpdesk",
         "tickets",
         "sla",
         "knowledge-base"
     ],
-    "homepage": "https://focalcrm.io",
+    "homepage": "https://odden.io",
     "support": {
-        "issues": "https://github.com/focalcrm/focal/issues",
-        "source": "https://github.com/focalcrm/focal"
+        "issues": "https://github.com/getodden/crm/issues",
+        "source": "https://github.com/getodden/crm"
     },
     "authors": [
         {
             "name": "CaskStack, LLC",
-            "homepage": "https://focalcrm.io"
+            "homepage": "https://odden.io"
         }
     ],
     "require": {
         "php": "^8.3",
-        "focalcrm/core": "self.version",
+        "getodden/crm-core": "self.version",
         "laravel/framework": "^12.0 || ^13.0"
     },
     "require-dev": {
@@ -44,13 +44,13 @@
     ],
     "autoload": {
         "psr-4": {
-            "Focal\\Service\\": "src/",
-            "Focal\\Service\\Database\\Factories\\": "database/factories/"
+            "Odden\\Service\\": "src/",
+            "Odden\\Service\\Database\\Factories\\": "database/factories/"
         }
     },
     "autoload-dev": {
         "psr-4": {
-            "Focal\\Service\\Tests\\": "tests/"
+            "Odden\\Service\\Tests\\": "tests/"
         }
     },
     "scripts": {
@@ -59,7 +59,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Focal\\Service\\ServiceHubServiceProvider"
+                "Odden\\Service\\ServiceHubServiceProvider"
             ]
         },
         "branch-alias": {

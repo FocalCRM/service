@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Http\Controllers;
+namespace Odden\Service\Http\Controllers;
 
-use Focal\Service\Actions\DeflectTicketAction;
-use Focal\Service\Models\KnowledgeArticle;
+use Odden\Service\Actions\DeflectTicketAction;
+use Odden\Service\Models\KnowledgeArticle;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;

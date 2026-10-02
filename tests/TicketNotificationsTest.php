@@ -2,22 +2,22 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Tests;
+namespace Odden\Service\Tests;
 
-use Focal\Core\Models\Contact;
-use Focal\Service\Actions\CheckSlaBreachesAction;
-use Focal\Service\Actions\CreateTicketAction;
-use Focal\Service\Actions\ReplyTicketAction;
-use Focal\Service\Actions\ResolveTicketAction;
-use Focal\Service\Enums\MessageSenderType;
-use Focal\Service\Enums\TicketPriority;
-use Focal\Service\Enums\TicketStatus;
-use Focal\Service\Models\Ticket;
-use Focal\Service\Notifications\SlaBreachAlertNotification;
-use Focal\Service\Notifications\TicketCreatedNotification;
-use Focal\Service\Notifications\TicketRepliedNotification;
-use Focal\Service\Notifications\TicketResolvedCsatNotification;
-use Focal\Service\Tests\Fixtures\User;
+use Odden\Core\Models\Contact;
+use Odden\Service\Actions\CheckSlaBreachesAction;
+use Odden\Service\Actions\CreateTicketAction;
+use Odden\Service\Actions\ReplyTicketAction;
+use Odden\Service\Actions\ResolveTicketAction;
+use Odden\Service\Enums\MessageSenderType;
+use Odden\Service\Enums\TicketPriority;
+use Odden\Service\Enums\TicketStatus;
+use Odden\Service\Models\Ticket;
+use Odden\Service\Notifications\SlaBreachAlertNotification;
+use Odden\Service\Notifications\TicketCreatedNotification;
+use Odden\Service\Notifications\TicketRepliedNotification;
+use Odden\Service\Notifications\TicketResolvedCsatNotification;
+use Odden\Service\Tests\Fixtures\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 

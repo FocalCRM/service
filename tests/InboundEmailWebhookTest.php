@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Tests;
+namespace Odden\Service\Tests;
 
-use Focal\Core\Models\Contact;
-use Focal\Service\Enums\TicketSource;
-use Focal\Service\Enums\TicketStatus;
-use Focal\Service\Models\SlaPolicy;
-use Focal\Service\Models\Ticket;
+use Odden\Core\Models\Contact;
+use Odden\Service\Enums\TicketSource;
+use Odden\Service\Enums\TicketStatus;
+use Odden\Service\Models\SlaPolicy;
+use Odden\Service\Models\Ticket;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class InboundEmailWebhookTest extends TestCase
@@ -193,7 +193,7 @@ class InboundEmailWebhookTest extends TestCase
 
     public function test_inbound_email_does_not_thread_by_ticket_number_alone_whatever_the_prefix_or_case(): void
     {
-        config(['focal-service.defaults.prefix' => 'Acme']);
+        config(['odden-service.defaults.prefix' => 'Acme']);
 
         $customer = Contact::factory()->create(['email' => 'ops@client.test']);
 
@@ -210,7 +210,7 @@ class InboundEmailWebhookTest extends TestCase
                 'from' => 'ops@client.test',
                 'subject' => "Re: [{$number}] Sync stalled",
                 'body' => "Any update on {$number}?",
-                'In-Reply-To' => "<{$number}@mail.focal.test>",
+                'In-Reply-To' => "<{$number}@mail.odden.test>",
             ])->assertStatus(201)->assertJsonPath('status', 'created');
         }
 

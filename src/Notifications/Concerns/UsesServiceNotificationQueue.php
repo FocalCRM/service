@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Notifications\Concerns;
+namespace Odden\Service\Notifications\Concerns;
 
 /**
  * Puts a queued service notification on the connection and queue named by
- * focal-service.notifications.connection and focal-service.notifications.queue. Null (the
+ * odden-service.notifications.connection and odden-service.notifications.queue. Null (the
  * default for both) means the application's default connection and that connection's
  * default queue.
  *
@@ -17,8 +17,8 @@ trait UsesServiceNotificationQueue
 {
     protected function useServiceNotificationQueue(): void
     {
-        $connection = config('focal-service.notifications.connection');
-        $queue = config('focal-service.notifications.queue');
+        $connection = config('odden-service.notifications.connection');
+        $queue = config('odden-service.notifications.queue');
 
         $this->onConnection(is_string($connection) && $connection !== '' ? $connection : null);
         $this->onQueue(is_string($queue) && $queue !== '' ? $queue : null);

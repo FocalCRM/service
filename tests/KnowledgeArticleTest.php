@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Tests;
+namespace Odden\Service\Tests;
 
-use Focal\Service\Models\KnowledgeArticle;
-use Focal\Service\Tests\Fixtures\User;
+use Odden\Service\Models\KnowledgeArticle;
+use Odden\Service\Tests\Fixtures\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class KnowledgeArticleTest extends TestCase

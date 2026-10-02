@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Models;
+namespace Odden\Service\Models;
 
 use Carbon\CarbonInterface;
-use Focal\Core\Models\Company;
-use Focal\Core\Models\Contact;
-use Focal\Core\Support\UserModel;
-use Focal\Core\Traits\HasCustomProperties;
-use Focal\Service\Enums\MessageSenderType;
-use Focal\Service\Enums\TicketPriority;
-use Focal\Service\Enums\TicketSource;
-use Focal\Service\Enums\TicketStatus;
+use Odden\Core\Models\Company;
+use Odden\Core\Models\Contact;
+use Odden\Core\Support\UserModel;
+use Odden\Core\Traits\HasCustomProperties;
+use Odden\Service\Enums\MessageSenderType;
+use Odden\Service\Enums\TicketPriority;
+use Odden\Service\Enums\TicketSource;
+use Odden\Service\Enums\TicketStatus;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -110,7 +110,7 @@ class Ticket extends Model
      */
     public function getTable(): string
     {
-        return config('focal-service.tables.tickets', 'focal_service_tickets');
+        return config('odden-service.tables.tickets', 'odden_service_tickets');
     }
 
     /**
@@ -144,7 +144,7 @@ class Ticket extends Model
     {
         static::creating(function (self $ticket): void {
             if (empty($ticket->ticket_number)) {
-                $prefix = (string) config('focal-service.defaults.prefix', 'TICK');
+                $prefix = (string) config('odden-service.defaults.prefix', 'TICK');
                 $ticket->ticket_number = $prefix.'-'.now()->format('Y').'-'.strtoupper(Str::random(5));
             }
 
@@ -284,10 +284,10 @@ class Ticket extends Model
             $this->updateQuietly($updates);
         } elseif (! $isInternalNote && $senderType === MessageSenderType::Customer) {
             // Customer replied: New and WaitingOnCustomer become Open; Resolved and Closed are
-            // reopened when focal-service.reopen_on_customer_reply is on (the default). A ticket
+            // reopened when odden-service.reopen_on_customer_reply is on (the default). A ticket
             // merged into another stays closed; replies to it belong on mergeTarget().
             if ($this->status->isClosed()) {
-                if ($this->merged_into_ticket_id === null && (bool) config('focal-service.reopen_on_customer_reply', true)) {
+                if ($this->merged_into_ticket_id === null && (bool) config('odden-service.reopen_on_customer_reply', true)) {
                     $this->updateQuietly([
                         'status' => TicketStatus::Open,
                         'resolved_at' => null,
@@ -431,7 +431,7 @@ class Ticket extends Model
      */
     public function getPortalUrl(): string
     {
-        return route('focal.support.show', $this->portal_token);
+        return route('odden.support.show', $this->portal_token);
     }
 
     /**
@@ -439,6 +439,6 @@ class Ticket extends Model
      */
     public function getCsatUrl(): string
     {
-        return route('focal.support.rate', $this->portal_token);
+        return route('odden.support.rate', $this->portal_token);
     }
 }

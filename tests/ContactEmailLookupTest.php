@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Tests;
+namespace Odden\Service\Tests;
 
-use Focal\Core\Models\Contact;
-use Focal\Service\Models\Ticket;
+use Odden\Core\Models\Contact;
+use Odden\Service\Models\Ticket;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 /**
@@ -70,7 +70,7 @@ class ContactEmailLookupTest extends TestCase
 
     public function test_chat_stores_new_contacts_lowercased_and_trimmed(): void
     {
-        $this->postJson(route('focal.service.chat.start'), [
+        $this->postJson(route('odden.service.chat.start'), [
             'name' => 'Kim Lee',
             'email' => 'Kim.Lee@Client.TEST',
             'message' => 'Hi',

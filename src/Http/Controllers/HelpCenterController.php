@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Http\Controllers;
+namespace Odden\Service\Http\Controllers;
 
-use Focal\Service\Models\KnowledgeArticle;
+use Odden\Service\Models\KnowledgeArticle;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -41,7 +41,7 @@ class HelpCenterController extends Controller
             ->pluck('category')
             ->all();
 
-        return view('focal-service::help.index', [
+        return view('odden-service::help.index', [
             'articles' => $articles,
             'categories' => $categories,
             'search' => $search,
@@ -69,7 +69,7 @@ class HelpCenterController extends Controller
             ->take(4)
             ->get();
 
-        return view('focal-service::help.show', [
+        return view('odden-service::help.show', [
             'article' => $article,
             'relatedArticles' => $relatedArticles,
         ]);

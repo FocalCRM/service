@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Models;
+namespace Odden\Service\Models;
 
 use Carbon\CarbonInterface;
-use Focal\Core\Models\Contact;
-use Focal\Core\Support\UserModel;
-use Focal\Service\Enums\MessageSenderType;
+use Odden\Core\Models\Contact;
+use Odden\Core\Support\UserModel;
+use Odden\Service\Enums\MessageSenderType;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
@@ -48,7 +48,7 @@ class TicketMessage extends Model
      */
     public function getTable(): string
     {
-        return config('focal-service.tables.messages', 'focal_service_ticket_messages');
+        return config('odden-service.tables.messages', 'odden_service_ticket_messages');
     }
 
     /**

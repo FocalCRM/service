@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Models;
+namespace Odden\Service\Models;
 
 use Carbon\CarbonInterface;
 use Illuminate\Database\Eloquent\Model;
@@ -39,7 +39,7 @@ class TicketRoutingRule extends Model
      */
     public function getTable(): string
     {
-        return config('focal-service.tables.routing_rules', 'focal_service_routing_rules');
+        return config('odden-service.tables.routing_rules', 'odden_service_routing_rules');
     }
 
     /**

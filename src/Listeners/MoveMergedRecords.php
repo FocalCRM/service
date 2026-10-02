@@ -2,10 +2,10 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Listeners;
+namespace Odden\Service\Listeners;
 
-use Focal\Core\Events\CompaniesMerged;
-use Focal\Core\Events\ContactsMerged;
+use Odden\Core\Events\CompaniesMerged;
+use Odden\Core\Events\ContactsMerged;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
 
@@ -36,11 +36,11 @@ class MoveMergedRecords
     private function table(string $key): string
     {
         $default = match ($key) {
-            'tickets' => 'focal_service_tickets',
-            'messages' => 'focal_service_ticket_messages',
+            'tickets' => 'odden_service_tickets',
+            'messages' => 'odden_service_ticket_messages',
             default => throw new InvalidArgumentException("Unknown Service table [{$key}]."),
         };
 
-        return config()->string("focal-service.tables.{$key}", $default);
+        return config()->string("odden-service.tables.{$key}", $default);
     }
 }

@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $ticketsTable = config('focal-service.tables.tickets', 'focal_service_tickets');
+        $ticketsTable = config('odden-service.tables.tickets', 'odden_service_tickets');
 
         Schema::table($ticketsTable, function (Blueprint $table) use ($ticketsTable): void {
             $table->foreignId('merged_into_ticket_id')
@@ -30,7 +30,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        $ticketsTable = config('focal-service.tables.tickets', 'focal_service_tickets');
+        $ticketsTable = config('odden-service.tables.tickets', 'odden_service_tickets');
 
         Schema::table($ticketsTable, function (Blueprint $table): void {
             $table->dropForeign(['merged_into_ticket_id']);

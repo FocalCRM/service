@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Submit a Support Ticket - Focal</title>
+    <title>Submit a Support Ticket - Odden</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,11 +16,11 @@
 
     <header class="bg-white border-b border-slate-200">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-            <a href="{{ route('focal.help.index') }}" class="flex items-center gap-2">
+            <a href="{{ route('odden.help.index') }}" class="flex items-center gap-2">
                 <span class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">F</span>
-                <span class="font-bold text-lg text-slate-900 tracking-tight">Focal Support</span>
+                <span class="font-bold text-lg text-slate-900 tracking-tight">Odden Support</span>
             </a>
-            <a href="{{ route('focal.help.index') }}" class="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition">
+            <a href="{{ route('odden.help.index') }}" class="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition">
                 &larr; Knowledge Base
             </a>
         </div>
@@ -43,7 +43,7 @@
                 </div>
             @endif
 
-            <form action="{{ route('focal.support.store') }}" method="POST" class="space-y-6">
+            <form action="{{ route('odden.support.store') }}" method="POST" class="space-y-6">
                 @csrf
 
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
@@ -93,7 +93,7 @@
                         <span class="text-xl">🎉</span>
                         <div>
                             <p class="font-bold text-base mb-1">Awesome! Glad we could help resolve your issue!</p>
-                            <p class="text-emerald-700 text-xs">Your inquiry was solved self-service. If you ever need anything else, you can return to our <a href="{{ route('focal.help.index') }}" class="underline font-semibold">Help Center</a>.</p>
+                            <p class="text-emerald-700 text-xs">Your inquiry was solved self-service. If you ever need anything else, you can return to our <a href="{{ route('odden.help.index') }}" class="underline font-semibold">Help Center</a>.</p>
                         </div>
                     </div>
                 </div>
@@ -115,7 +115,7 @@
     </main>
 
     <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400 mt-12">
-        &copy; {{ date('Y') }} Focal CRM Inc. All rights reserved.
+        &copy; {{ date('Y') }} Odden CRM Inc. All rights reserved.
     </footer>
 
     <script>
@@ -178,7 +178,7 @@
                 }
 
                 timeout = setTimeout(() => {
-                    fetch(`{{ route('focal.service.knowledge.suggest') }}?q=${encodeURIComponent(query)}`)
+                    fetch(`{{ route('odden.service.knowledge.suggest') }}?q=${encodeURIComponent(query)}`)
                         .then(r => r.json())
                         .then(payload => {
                             if (!payload.data || payload.data.length === 0) {
@@ -196,7 +196,7 @@
             });
 
             window.recordDeflection = (articleId) => {
-                fetch(`{{ route('focal.service.knowledge.deflect') }}`, {
+                fetch(`{{ route('odden.service.knowledge.deflect') }}`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',

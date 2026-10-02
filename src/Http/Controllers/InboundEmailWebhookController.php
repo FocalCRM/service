@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Http\Controllers;
+namespace Odden\Service\Http\Controllers;
 
-use Focal\Core\Models\Contact;
-use Focal\Core\Support\ContactLookup;
-use Focal\Service\Actions\CreateTicketAction;
-use Focal\Service\Actions\ReplyTicketAction;
-use Focal\Service\Enums\MessageSenderType;
-use Focal\Service\Enums\TicketPriority;
-use Focal\Service\Enums\TicketSource;
-use Focal\Service\Models\Ticket;
+use Odden\Core\Models\Contact;
+use Odden\Core\Support\ContactLookup;
+use Odden\Service\Actions\CreateTicketAction;
+use Odden\Service\Actions\ReplyTicketAction;
+use Odden\Service\Enums\MessageSenderType;
+use Odden\Service\Enums\TicketPriority;
+use Odden\Service\Enums\TicketSource;
+use Odden\Service\Models\Ticket;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
@@ -218,13 +218,13 @@ class InboundEmailWebhookController extends Controller
     /**
      * Whether threading is allowed by the provider's sender authentication verdict.
      *
-     * Only checked when focal-service.inbound_email.require_authenticated_sender is true. The
+     * Only checked when odden-service.inbound_email.require_authenticated_sender is true. The
      * sender counts as authenticated when sender_authenticated is true, 1, "true", "yes", "on"
      * or "pass", or dmarc is "pass" (both case-insensitive).
      */
     protected function senderIsAuthenticated(Request $request): bool
     {
-        if (! (bool) config('focal-service.inbound_email.require_authenticated_sender', false)) {
+        if (! (bool) config('odden-service.inbound_email.require_authenticated_sender', false)) {
             return true;
         }
 

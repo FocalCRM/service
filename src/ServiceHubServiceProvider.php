@@ -2,14 +2,14 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service;
+namespace Odden\Service;
 
-use Focal\Core\Events\CompaniesMerged;
-use Focal\Core\Events\ContactsMerged;
-use Focal\Core\Models\Company;
-use Focal\Core\Models\Contact;
-use Focal\Service\Listeners\MoveMergedRecords;
-use Focal\Service\Models\Ticket;
+use Odden\Core\Events\CompaniesMerged;
+use Odden\Core\Events\ContactsMerged;
+use Odden\Core\Models\Company;
+use Odden\Core\Models\Contact;
+use Odden\Service\Listeners\MoveMergedRecords;
+use Odden\Service\Models\Ticket;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
@@ -21,8 +21,8 @@ class ServiceHubServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->mergeConfigFrom(
-            __DIR__.'/../config/focal-service.php',
-            'focal-service'
+            __DIR__.'/../config/odden-service.php',
+            'odden-service'
         );
     }
 
@@ -32,8 +32,8 @@ class ServiceHubServiceProvider extends ServiceProvider
     public function boot(): void
     {
         $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
-        $this->loadViewsFrom(__DIR__.'/../resources/views', 'focal-service');
-        if (config('focal-service.routes.enabled', true)) {
+        $this->loadViewsFrom(__DIR__.'/../resources/views', 'odden-service');
+        if (config('odden-service.routes.enabled', true)) {
             $this->loadRoutesFrom(__DIR__.'/../routes/web.php');
         }
 
@@ -60,12 +60,12 @@ class ServiceHubServiceProvider extends ServiceProvider
             ]);
 
             $this->publishes([
-                __DIR__.'/../config/focal-service.php' => config_path('focal-service.php'),
-            ], 'focal-service-config');
+                __DIR__.'/../config/odden-service.php' => config_path('odden-service.php'),
+            ], 'odden-service-config');
 
             $this->publishes([
                 __DIR__.'/../database/migrations' => database_path('migrations'),
-            ], 'focal-service-migrations');
+            ], 'odden-service-migrations');
         }
     }
 }

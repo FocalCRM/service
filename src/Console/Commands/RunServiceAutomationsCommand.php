@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Console\Commands;
+namespace Odden\Service\Console\Commands;
 
-use Focal\Service\Actions\RunServiceAutomationsAction;
+use Odden\Service\Actions\RunServiceAutomationsAction;
 use Illuminate\Console\Command;
 
 class RunServiceAutomationsCommand extends Command

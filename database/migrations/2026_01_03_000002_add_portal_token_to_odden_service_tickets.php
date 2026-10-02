@@ -13,7 +13,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        $ticketsTable = config('focal-service.tables.tickets', 'focal_service_tickets');
+        $ticketsTable = config('odden-service.tables.tickets', 'odden_service_tickets');
 
         Schema::table($ticketsTable, function (Blueprint $table): void {
             $table->string('portal_token', 64)->nullable()->unique()->after('ticket_number');
@@ -25,7 +25,7 @@ return new class extends Migration
      */
     public function down(): void
     {
-        $ticketsTable = config('focal-service.tables.tickets', 'focal_service_tickets');
+        $ticketsTable = config('odden-service.tables.tickets', 'odden_service_tickets');
 
         Schema::table($ticketsTable, function (Blueprint $table): void {
             $table->dropColumn('portal_token');

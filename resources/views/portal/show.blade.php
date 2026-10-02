@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ticket #{{ $ticket->ticket_number }} - Focal Support</title>
+    <title>Ticket #{{ $ticket->ticket_number }} - Odden Support</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,13 +16,13 @@
 
     <header class="bg-white border-b border-slate-200 sticky top-0 z-30">
         <div class="max-w-4xl mx-auto px-4 sm:px-6 h-16 flex items-center justify-between">
-            <a href="{{ route('focal.help.index') }}" class="flex items-center gap-2">
+            <a href="{{ route('odden.help.index') }}" class="flex items-center gap-2">
                 <span class="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center text-white font-bold text-lg shadow-sm">F</span>
-                <span class="font-bold text-lg text-slate-900 tracking-tight">Focal Support</span>
+                <span class="font-bold text-lg text-slate-900 tracking-tight">Odden Support</span>
             </a>
             <div class="flex items-center gap-4 text-xs font-semibold">
-                <a href="{{ route('focal.help.index') }}" class="text-slate-500 hover:text-indigo-600 transition">Help Center</a>
-                <a href="{{ route('focal.support.create') }}" class="text-indigo-600 hover:text-indigo-700 transition">New Ticket</a>
+                <a href="{{ route('odden.help.index') }}" class="text-slate-500 hover:text-indigo-600 transition">Help Center</a>
+                <a href="{{ route('odden.support.create') }}" class="text-indigo-600 hover:text-indigo-700 transition">New Ticket</a>
             </div>
         </div>
     </header>
@@ -55,7 +55,7 @@
                 </div>
 
                 <!-- CSAT Rating CTA if Resolved -->
-                @if($ticket->status === \Focal\Service\Enums\TicketStatus::Resolved || $ticket->status === \Focal\Service\Enums\TicketStatus::Closed)
+                @if($ticket->status === \Odden\Service\Enums\TicketStatus::Resolved || $ticket->status === \Odden\Service\Enums\TicketStatus::Closed)
                     @if($ticket->csat_rating)
                         <div class="px-4 py-3 rounded-xl bg-amber-50 border border-amber-200 text-center shrink-0">
                             <span class="block text-xs font-bold text-amber-900 uppercase">Your Rating</span>
@@ -64,7 +64,7 @@
                             </span>
                         </div>
                     @else
-                        <a href="{{ route('focal.support.rate', $ticket->portal_token) }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition shadow-sm shrink-0">
+                        <a href="{{ route('odden.support.rate', $ticket->portal_token) }}" class="inline-flex items-center gap-2 px-4 py-2.5 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-bold transition shadow-sm shrink-0">
                             ★ Rate Your Experience
                         </a>
                     @endif
@@ -103,7 +103,7 @@
 
             @foreach($publicMessages as $message)
                 @php
-                    $isCustomer = $message->sender_type === \Focal\Service\Enums\MessageSenderType::Customer;
+                    $isCustomer = $message->sender_type === \Odden\Service\Enums\MessageSenderType::Customer;
                 @endphp
                 <div class="flex gap-4 {{ $isCustomer ? '' : 'flex-row-reverse' }}">
                     <div class="w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm text-white shrink-0 {{ $isCustomer ? 'bg-indigo-600' : 'bg-emerald-600' }}">
@@ -127,12 +127,12 @@
         </div>
 
         <!-- Customer Reply Box (if not permanently closed) -->
-        @if($ticket->status !== \Focal\Service\Enums\TicketStatus::Closed)
+        @if($ticket->status !== \Odden\Service\Enums\TicketStatus::Closed)
             <div class="bg-white rounded-2xl border border-slate-200 p-6 sm:p-8 shadow-sm">
                 <h3 class="text-base font-bold text-slate-900 mb-2">Reply to this Ticket</h3>
                 <p class="text-xs text-slate-500 mb-4">Add more information or follow up with your support specialist.</p>
 
-                <form action="{{ route('focal.support.reply', $ticket->portal_token) }}" method="POST" class="space-y-4">
+                <form action="{{ route('odden.support.reply', $ticket->portal_token) }}" method="POST" class="space-y-4">
                     @csrf
                     <div>
                         <textarea name="body" rows="4" required placeholder="Type your response here..."
@@ -150,7 +150,7 @@
     </main>
 
     <footer class="bg-white border-t border-slate-200 py-6 text-center text-xs text-slate-400 mt-12">
-        &copy; {{ date('Y') }} Focal CRM Inc. All rights reserved.
+        &copy; {{ date('Y') }} Odden CRM Inc. All rights reserved.
     </footer>
 </body>
 </html>

@@ -2,12 +2,12 @@
 
 declare(strict_types=1);
 
-use Focal\Core\Actions\MergeCompaniesAction;
-use Focal\Core\Actions\MergeContactsAction;
-use Focal\Core\Models\Company;
-use Focal\Core\Models\Contact;
-use Focal\Service\Models\Ticket;
-use Focal\Service\Models\TicketMessage;
+use Odden\Core\Actions\MergeCompaniesAction;
+use Odden\Core\Actions\MergeContactsAction;
+use Odden\Core\Models\Company;
+use Odden\Core\Models\Contact;
+use Odden\Service\Models\Ticket;
+use Odden\Service\Models\TicketMessage;
 
 test('merging contacts moves the secondary contact\'s tickets and ticket messages to the primary', function () {
     [$primary, $secondary] = Contact::factory()->count(2)->create();

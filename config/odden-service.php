@@ -8,16 +8,16 @@ return [
     | Database Tables
     |--------------------------------------------------------------------------
     |
-    | Define the database table names used by the Focal Service package.
+    | Define the database table names used by the Odden Service package.
     |
     */
     'tables' => [
-        'tickets' => 'focal_service_tickets',
-        'messages' => 'focal_service_ticket_messages',
-        'sla_policies' => 'focal_service_sla_policies',
-        'articles' => 'focal_service_articles',
-        'canned_responses' => 'focal_service_canned_responses',
-        'routing_rules' => 'focal_service_routing_rules',
+        'tickets' => 'odden_service_tickets',
+        'messages' => 'odden_service_ticket_messages',
+        'sla_policies' => 'odden_service_sla_policies',
+        'articles' => 'odden_service_articles',
+        'canned_responses' => 'odden_service_canned_responses',
+        'routing_rules' => 'odden_service_routing_rules',
     ],
 
     /*
@@ -43,22 +43,22 @@ return [
     | group. The inbound email webhook, knowledge deflection and chat widget
     | APIs are registered in the "api" group. Each group accepts a domain,
     | prefix and middleware. Set "enabled" to false to register your own
-    | routes instead; keep the focal.help.*, focal.support.* and
-    | focal.service.* route names, since notifications link to them.
+    | routes instead; keep the odden.help.*, odden.support.* and
+    | odden.service.* route names, since notifications link to them.
     |
     */
     'routes' => [
-        'enabled' => (bool) env('FOCAL_SERVICE_ROUTES_ENABLED', true),
+        'enabled' => (bool) env('ODDEN_SERVICE_ROUTES_ENABLED', true),
 
         'web' => [
-            'domain' => env('FOCAL_SERVICE_DOMAIN'),
-            'prefix' => env('FOCAL_SERVICE_PREFIX', ''),
+            'domain' => env('ODDEN_SERVICE_DOMAIN'),
+            'prefix' => env('ODDEN_SERVICE_PREFIX', ''),
             'middleware' => ['web'],
         ],
 
         'api' => [
-            'domain' => env('FOCAL_SERVICE_DOMAIN'),
-            'prefix' => env('FOCAL_SERVICE_API_PREFIX', 'api/service'),
+            'domain' => env('ODDEN_SERVICE_DOMAIN'),
+            'prefix' => env('ODDEN_SERVICE_API_PREFIX', 'api/service'),
             'middleware' => ['web'],
         ],
     ],
@@ -70,12 +70,12 @@ return [
     |
     | Shared secret for this package's server-to-server endpoints (webhooks and
     | sending APIs). Send it as 'Authorization: Bearer <token>', an
-    | 'X-Focal-Token' header, or a '?token=' query parameter. While empty, those
+    | 'X-Odden-Token' header, or a '?token=' query parameter. While empty, those
     | endpoints are disabled. Generate one with: php -r 'echo bin2hex(random_bytes(32));'
     |
     */
     'api' => [
-        'token' => env('FOCAL_SERVICE_API_TOKEN'),
+        'token' => env('ODDEN_SERVICE_API_TOKEN'),
     ],
 
     /*
@@ -91,7 +91,7 @@ return [
     |
     */
     'inbound_email' => [
-        'require_authenticated_sender' => (bool) env('FOCAL_SERVICE_INBOUND_REQUIRE_AUTH', false),
+        'require_authenticated_sender' => (bool) env('ODDEN_SERVICE_INBOUND_REQUIRE_AUTH', false),
     ],
 
     /*
@@ -105,7 +105,7 @@ return [
     | left alone. Replies to a merged ticket always go to its primary ticket.
     |
     */
-    'reopen_on_customer_reply' => (bool) env('FOCAL_SERVICE_REOPEN_ON_CUSTOMER_REPLY', true),
+    'reopen_on_customer_reply' => (bool) env('ODDEN_SERVICE_REOPEN_ON_CUSTOMER_REPLY', true),
 
     /*
     |--------------------------------------------------------------------------
@@ -121,7 +121,7 @@ return [
     |
     */
     'chat' => [
-        'confirmation_email' => (bool) env('FOCAL_SERVICE_CHAT_CONFIRMATION_EMAIL', false),
+        'confirmation_email' => (bool) env('ODDEN_SERVICE_CHAT_CONFIRMATION_EMAIL', false),
     ],
 
     /*
@@ -136,7 +136,7 @@ return [
     |
     */
     'notifications' => [
-        'connection' => env('FOCAL_SERVICE_NOTIFICATIONS_CONNECTION'),
-        'queue' => env('FOCAL_SERVICE_NOTIFICATIONS_QUEUE'),
+        'connection' => env('ODDEN_SERVICE_NOTIFICATIONS_CONNECTION'),
+        'queue' => env('ODDEN_SERVICE_NOTIFICATIONS_QUEUE'),
     ],
 ];

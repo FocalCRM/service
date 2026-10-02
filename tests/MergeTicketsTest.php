@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Tests;
+namespace Odden\Service\Tests;
 
-use Focal\Core\Models\Contact;
-use Focal\Service\Actions\MergeTicketsAction;
-use Focal\Service\Enums\MessageSenderType;
-use Focal\Service\Enums\TicketPriority;
-use Focal\Service\Enums\TicketStatus;
-use Focal\Service\Models\Ticket;
-use Focal\Service\Models\TicketMessage;
-use Focal\Service\Tests\Fixtures\User;
+use Odden\Core\Models\Contact;
+use Odden\Service\Actions\MergeTicketsAction;
+use Odden\Service\Enums\MessageSenderType;
+use Odden\Service\Enums\TicketPriority;
+use Odden\Service\Enums\TicketStatus;
+use Odden\Service\Models\Ticket;
+use Odden\Service\Models\TicketMessage;
+use Odden\Service\Tests\Fixtures\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use InvalidArgumentException;
 

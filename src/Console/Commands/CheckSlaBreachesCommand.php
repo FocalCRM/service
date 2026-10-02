@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Console\Commands;
+namespace Odden\Service\Console\Commands;
 
-use Focal\Service\Actions\CheckSlaBreachesAction;
+use Odden\Service\Actions\CheckSlaBreachesAction;
 use Illuminate\Console\Command;
 
 class CheckSlaBreachesCommand extends Command

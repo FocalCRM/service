@@ -2,9 +2,9 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Notifications\Concerns;
+namespace Odden\Service\Notifications\Concerns;
 
-use Focal\Service\Models\Ticket;
+use Odden\Service\Models\Ticket;
 use Illuminate\Notifications\Messages\MailMessage;
 use Symfony\Component\Mime\Email;
 

@@ -2,16 +2,16 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Tests;
+namespace Odden\Service\Tests;
 
-use Focal\Core\Enums\ActivityType;
-use Focal\Core\Models\Contact;
-use Focal\Service\Enums\TicketSource;
-use Focal\Service\Enums\TicketStatus;
-use Focal\Service\Models\Ticket;
-use Focal\Service\Models\TicketRoutingRule;
-use Focal\Service\Notifications\TicketCreatedNotification;
-use Focal\Service\Tests\Fixtures\User;
+use Odden\Core\Enums\ActivityType;
+use Odden\Core\Models\Contact;
+use Odden\Service\Enums\TicketSource;
+use Odden\Service\Enums\TicketStatus;
+use Odden\Service\Models\Ticket;
+use Odden\Service\Models\TicketRoutingRule;
+use Odden\Service\Notifications\TicketCreatedNotification;
+use Odden\Service\Tests\Fixtures\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
 
@@ -68,7 +68,7 @@ class ChatTicketCreationTest extends TestCase
     public function test_chat_confirmation_email_can_be_turned_on(): void
     {
         Notification::fake();
-        config(['focal-service.chat.confirmation_email' => true]);
+        config(['odden-service.chat.confirmation_email' => true]);
 
         $ticket = $this->startChat();
 
@@ -103,7 +103,7 @@ class ChatTicketCreationTest extends TestCase
 
     private function startChat(string $message = 'Hello, I need help.', string $email = 'sarah@cyberdyne.test'): Ticket
     {
-        $response = $this->postJson(route('focal.service.chat.start'), [
+        $response = $this->postJson(route('odden.service.chat.start'), [
             'name' => 'Sarah Connor',
             'email' => $email,
             'message' => $message,

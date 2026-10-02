@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Tests;
+namespace Odden\Service\Tests;
 
 use Carbon\Carbon;
-use Focal\Service\Enums\TicketPriority;
-use Focal\Service\Enums\TicketStatus;
-use Focal\Service\Models\SlaPolicy;
-use Focal\Service\Models\Ticket;
+use Odden\Service\Enums\TicketPriority;
+use Odden\Service\Enums\TicketStatus;
+use Odden\Service\Models\SlaPolicy;
+use Odden\Service\Models\Ticket;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class BusinessHoursSlaTest extends TestCase

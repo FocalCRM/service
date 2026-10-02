@@ -2,17 +2,17 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Tests;
+namespace Odden\Service\Tests;
 
-use Focal\Core\Models\Contact;
-use Focal\Service\Actions\MergeTicketsAction;
-use Focal\Service\Actions\ReplyTicketAction;
-use Focal\Service\Enums\MessageSenderType;
-use Focal\Service\Enums\TicketSource;
-use Focal\Service\Enums\TicketStatus;
-use Focal\Service\Models\Ticket;
-use Focal\Service\Models\TicketMessage;
-use Focal\Service\Notifications\Concerns\SetsTicketMessageId;
+use Odden\Core\Models\Contact;
+use Odden\Service\Actions\MergeTicketsAction;
+use Odden\Service\Actions\ReplyTicketAction;
+use Odden\Service\Enums\MessageSenderType;
+use Odden\Service\Enums\TicketSource;
+use Odden\Service\Enums\TicketStatus;
+use Odden\Service\Models\Ticket;
+use Odden\Service\Models\TicketMessage;
+use Odden\Service\Notifications\Concerns\SetsTicketMessageId;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Testing\TestResponse;
 
@@ -63,7 +63,7 @@ class CustomerReplyRoutingTest extends TestCase
 
     public function test_reopening_can_be_turned_off(): void
     {
-        config(['focal-service.reopen_on_customer_reply' => false]);
+        config(['odden-service.reopen_on_customer_reply' => false]);
 
         [, $closed] = $this->ticketFor('dana@client.test');
         $closed->close();
@@ -185,7 +185,7 @@ class CustomerReplyRoutingTest extends TestCase
         [, $secondary] = $this->ticketFor('dana@client.test', TicketSource::Chat);
         (new MergeTicketsAction)->execute($primary, $secondary);
 
-        $this->postJson(route('focal.service.chat.message', ['token' => $secondary->portal_token]), ['message' => 'Chat follow-up.'])
+        $this->postJson(route('odden.service.chat.message', ['token' => $secondary->portal_token]), ['message' => 'Chat follow-up.'])
             ->assertStatus(409)
             ->assertJsonPath('merged', true)
             ->assertJsonPath('success', false);
@@ -202,7 +202,7 @@ class CustomerReplyRoutingTest extends TestCase
         $victimTicket->addMessage('My account number is 12345.', MessageSenderType::Customer);
         $victimTicket->addMessage('Here is your reset code: 987654.', MessageSenderType::Agent);
 
-        $token = (string) $this->postJson(route('focal.service.chat.start'), [
+        $token = (string) $this->postJson(route('odden.service.chat.start'), [
             'name' => 'Not The Victim',
             'email' => 'victim@corp.test',
             'message' => 'Same problem as my other ticket.',
@@ -212,7 +212,7 @@ class CustomerReplyRoutingTest extends TestCase
         $this->assertSame($victimTicket->contact_id, $chatTicket->contact_id);
         (new MergeTicketsAction)->execute($victimTicket, $chatTicket);
 
-        $read = $this->getJson(route('focal.service.chat.messages', ['token' => $token]))
+        $read = $this->getJson(route('odden.service.chat.messages', ['token' => $token]))
             ->assertOk()
             ->assertJsonPath('merged', true)
             ->assertJsonPath('ticket_number', $chatTicket->ticket_number);
@@ -222,7 +222,7 @@ class CustomerReplyRoutingTest extends TestCase
         $this->assertStringNotContainsString('Same problem', (string) $read->getContent());
         $this->assertStringNotContainsString($victimTicket->ticket_number, (string) $read->getContent());
 
-        $write = $this->postJson(route('focal.service.chat.message', ['token' => $token]), ['message' => 'Injected via chat.'])
+        $write = $this->postJson(route('odden.service.chat.message', ['token' => $token]), ['message' => 'Injected via chat.'])
             ->assertStatus(409);
         $this->assertStringNotContainsString('987654', (string) $write->getContent());
 
@@ -267,7 +267,7 @@ class CustomerReplyRoutingTest extends TestCase
         [, $ticket] = $this->ticketFor('dana@client.test');
         $ticket->close();
 
-        $this->postJson(route('focal.service.chat.message', ['token' => $ticket->portal_token]), ['message' => 'Hello again.'])
+        $this->postJson(route('odden.service.chat.message', ['token' => $ticket->portal_token]), ['message' => 'Hello again.'])
             ->assertOk();
 
         $this->assertSame(TicketStatus::Open, $ticket->refresh()->status);

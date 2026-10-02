@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Tests;
+namespace Odden\Service\Tests;
 
-use Focal\Service\Actions\RunServiceAutomationsAction;
-use Focal\Service\Enums\TicketStatus;
-use Focal\Service\Models\Ticket;
+use Odden\Service\Actions\RunServiceAutomationsAction;
+use Odden\Service\Enums\TicketStatus;
+use Odden\Service\Models\Ticket;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ServiceAutomationsTest extends TestCase

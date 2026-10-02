@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Support;
+namespace Odden\Service\Support;
 
 /**
  * Makes untrusted text safe to put in a MailMessage line.

@@ -30,7 +30,7 @@
             </div>
         @endif
 
-        <form action="{{ route('focal.support.submitRating', $ticket->portal_token) }}" method="POST" class="space-y-6">
+        <form action="{{ route('odden.support.submitRating', $ticket->portal_token) }}" method="POST" class="space-y-6">
             @csrf
 
             <!-- 1 to 5 Star Rating Radio Buttons -->
@@ -58,7 +58,7 @@
         </form>
 
         <div class="mt-6">
-            <a href="{{ route('focal.support.show', $ticket->portal_token) }}" class="text-xs font-semibold text-slate-400 hover:text-slate-600 transition">
+            <a href="{{ route('odden.support.show', $ticket->portal_token) }}" class="text-xs font-semibold text-slate-400 hover:text-slate-600 transition">
                 &larr; Return to Ticket #{{ $ticket->ticket_number }}
             </a>
         </div>

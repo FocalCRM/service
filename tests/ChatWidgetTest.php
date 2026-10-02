@@ -2,13 +2,13 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Tests;
+namespace Odden\Service\Tests;
 
-use Focal\Core\Models\Company;
-use Focal\Core\Models\Contact;
-use Focal\Service\Enums\TicketSource;
-use Focal\Service\Enums\TicketStatus;
-use Focal\Service\Models\Ticket;
+use Odden\Core\Models\Company;
+use Odden\Core\Models\Contact;
+use Odden\Service\Enums\TicketSource;
+use Odden\Service\Enums\TicketStatus;
+use Odden\Service\Models\Ticket;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ChatWidgetTest extends TestCase
@@ -24,7 +24,7 @@ class ChatWidgetTest extends TestCase
             'message' => 'Hello! We need assistance setting up webhook triggers.',
         ];
 
-        $response = $this->postJson(route('focal.service.chat.start'), $payload);
+        $response = $this->postJson(route('odden.service.chat.start'), $payload);
 
         $response->assertCreated()
             ->assertJsonPath('success', true)
@@ -66,7 +66,7 @@ class ChatWidgetTest extends TestCase
 
     public function test_can_send_subsequent_chat_message(): void
     {
-        $startResponse = $this->postJson(route('focal.service.chat.start'), [
+        $startResponse = $this->postJson(route('odden.service.chat.start'), [
             'name' => 'Kyle Reese',
             'email' => 'kyle@future.test',
             'message' => 'First message.',
@@ -74,7 +74,7 @@ class ChatWidgetTest extends TestCase
 
         $token = (string) $startResponse->json('token');
 
-        $messageResponse = $this->postJson(route('focal.service.chat.message', ['token' => $token]), [
+        $messageResponse = $this->postJson(route('odden.service.chat.message', ['token' => $token]), [
             'message' => 'Follow up message with more details.',
         ]);
 
@@ -89,7 +89,7 @@ class ChatWidgetTest extends TestCase
 
     public function test_can_fetch_chat_messages_by_token(): void
     {
-        $startResponse = $this->postJson(route('focal.service.chat.start'), [
+        $startResponse = $this->postJson(route('odden.service.chat.start'), [
             'name' => 'Miles Dyson',
             'email' => 'miles@future.test',
             'message' => 'Can we upgrade our tier?',
@@ -97,7 +97,7 @@ class ChatWidgetTest extends TestCase
 
         $token = (string) $startResponse->json('token');
 
-        $fetchResponse = $this->getJson(route('focal.service.chat.messages', ['token' => $token]));
+        $fetchResponse = $this->getJson(route('odden.service.chat.messages', ['token' => $token]));
 
         $fetchResponse->assertOk()
             ->assertJsonStructure([

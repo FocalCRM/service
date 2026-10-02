@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Enums;
+namespace Odden\Service\Enums;
 
 enum MessageSenderType: string
 {

@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Tests;
+namespace Odden\Service\Tests;
 
 use Illuminate\Contracts\Http\Kernel;
 
@@ -23,10 +23,10 @@ class CsrfExemptRoutesTest extends TestCase
         $this->assertNotEmpty($csrf, 'The web middleware group should contain CSRF protection.');
 
         foreach ([
-            'focal.service.inbound-email',
-            'focal.service.knowledge.deflect',
-            'focal.service.chat.start',
-            'focal.service.chat.message',
+            'odden.service.inbound-email',
+            'odden.service.knowledge.deflect',
+            'odden.service.chat.start',
+            'odden.service.chat.message',
         ] as $name) {
             $route = app('router')->getRoutes()->getByName($name);
 

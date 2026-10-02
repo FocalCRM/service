@@ -2,11 +2,11 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Support;
+namespace Odden\Service\Support;
 
-use Focal\Core\Support\ContactLookup as CoreContactLookup;
+use Odden\Core\Support\ContactLookup as CoreContactLookup;
 
 /**
- * @deprecated Use Focal\Core\Support\ContactLookup, which Service and Sales share.
+ * @deprecated Use Odden\Core\Support\ContactLookup, which Service and Sales share.
  */
 class ContactLookup extends CoreContactLookup {}

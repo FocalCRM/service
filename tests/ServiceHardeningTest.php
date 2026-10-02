@@ -2,21 +2,21 @@
 
 declare(strict_types=1);
 
-namespace Focal\Service\Tests;
+namespace Odden\Service\Tests;
 
-use Focal\Core\Enums\ActivityType;
-use Focal\Core\Models\Activity;
-use Focal\Core\Models\Contact;
-use Focal\Service\Actions\CheckSlaBreachesAction;
-use Focal\Service\Actions\ReplyTicketAction;
-use Focal\Service\Enums\MessageSenderType;
-use Focal\Service\Enums\TicketPriority;
-use Focal\Service\Enums\TicketSource;
-use Focal\Service\Enums\TicketStatus;
-use Focal\Service\Models\CannedResponse;
-use Focal\Service\Models\SlaPolicy;
-use Focal\Service\Models\Ticket;
-use Focal\Service\Tests\Fixtures\User;
+use Odden\Core\Enums\ActivityType;
+use Odden\Core\Models\Activity;
+use Odden\Core\Models\Contact;
+use Odden\Service\Actions\CheckSlaBreachesAction;
+use Odden\Service\Actions\ReplyTicketAction;
+use Odden\Service\Enums\MessageSenderType;
+use Odden\Service\Enums\TicketPriority;
+use Odden\Service\Enums\TicketSource;
+use Odden\Service\Enums\TicketStatus;
+use Odden\Service\Models\CannedResponse;
+use Odden\Service\Models\SlaPolicy;
+use Odden\Service\Models\Ticket;
+use Odden\Service\Tests\Fixtures\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ServiceHardeningTest extends TestCase
@@ -55,7 +55,7 @@ class ServiceHardeningTest extends TestCase
 
     public function test_inbound_email_webhook_with_custom_prefix_threads_by_portal_token_not_ticket_number(): void
     {
-        config(['focal-service.defaults.prefix' => 'SRV']);
+        config(['odden-service.defaults.prefix' => 'SRV']);
 
         $contact = Contact::factory()->create(['email' => 'billing@client.com']);
         /** @var Ticket $ticket */
@@ -69,17 +69,17 @@ class ServiceHardeningTest extends TestCase
         ]);
 
         // The custom-prefix ticket number alone (subject or In-Reply-To) no longer threads.
-        $numberOnly = $this->postJson(route('focal.service.inbound-email'), [
+        $numberOnly = $this->postJson(route('odden.service.inbound-email'), [
             'from' => 'Jane Client <billing@client.com>',
             'subject' => 'Re: [SRV-2026-9999] Invoice discrepancy March',
             'body' => 'Here is the attached wire receipt.',
-            'In-Reply-To' => '<SRV-2026-9999@mail.focal.crm>',
+            'In-Reply-To' => '<SRV-2026-9999@mail.odden.crm>',
         ]);
         $numberOnly->assertCreated()->assertJsonPath('status', 'created');
         $this->assertSame(0, $ticket->messages()->count());
 
         // The portal link in the body threads.
-        $response = $this->postJson(route('focal.service.inbound-email'), [
+        $response = $this->postJson(route('odden.service.inbound-email'), [
             'from' => 'Jane Client <billing@client.com>',
             'subject' => 'Re: [SRV-2026-9999] Invoice discrepancy March',
             'body' => "Here is the attached wire receipt.\n\n> {$ticket->getPortalUrl()}",
@@ -91,11 +91,11 @@ class ServiceHardeningTest extends TestCase
         $this->assertSame(TicketStatus::Open, $ticket->fresh()?->status);
 
         // A ticket Message-ID in In-Reply-To threads with the subject stripped.
-        $headerResponse = $this->postJson(route('focal.service.inbound-email'), [
+        $headerResponse = $this->postJson(route('odden.service.inbound-email'), [
             'from' => 'Jane Client <billing@client.com>',
             'subject' => 'Re: Quick Question',
             'body' => 'Also sending our tax ID.',
-            'In-Reply-To' => "<ticket.{$ticket->portal_token}.0a1b2c3d4e5f6a7b@mail.focal.crm>",
+            'In-Reply-To' => "<ticket.{$ticket->portal_token}.0a1b2c3d4e5f6a7b@mail.odden.crm>",
         ]);
         $headerResponse->assertOk()
             ->assertJsonPath('status', 'appended')
@@ -159,12 +159,12 @@ class ServiceHardeningTest extends TestCase
             'portal_token' => 'csat-token-negative-test-12345',
         ]);
 
-        $response = $this->post(route('focal.support.submitRating', ['token' => $ticket->portal_token]), [
+        $response = $this->post(route('odden.support.submitRating', ['token' => $ticket->portal_token]), [
             'rating' => 1,
             'comment' => 'Took 3 days to get an answer and the bug persists.',
         ]);
 
-        $response->assertRedirect(route('focal.support.show', ['token' => $ticket->portal_token]));
+        $response->assertRedirect(route('odden.support.show', ['token' => $ticket->portal_token]));
 
         $freshTicket = $ticket->fresh();
         $this->assertNotNull($freshTicket);
