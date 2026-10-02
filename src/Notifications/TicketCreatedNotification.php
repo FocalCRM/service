@@ -6,16 +6,23 @@ namespace Focal\Service\Notifications;
 
 use Focal\Service\Models\Ticket;
 use Focal\Service\Notifications\Concerns\SetsTicketMessageId;
+use Focal\Service\Notifications\Concerns\UsesServiceNotificationQueue;
+use Focal\Service\Support\MailMarkdown;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TicketCreatedNotification extends Notification
+class TicketCreatedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
     use SetsTicketMessageId;
+    use UsesServiceNotificationQueue;
 
-    public function __construct(public Ticket $ticket) {}
+    public function __construct(public Ticket $ticket)
+    {
+        $this->useServiceNotificationQueue();
+    }
 
     /**
      * @return array<int, string>
@@ -34,7 +41,7 @@ class TicketCreatedNotification extends Notification
             ->greeting('Hello,')
             ->line('Thank you for contacting customer support. We have received your request and our team is actively reviewing it.')
             ->line("**Ticket Reference:** #{$this->ticket->ticket_number}")
-            ->line("**Subject:** {$this->ticket->subject}")
+            ->line('**Subject:** '.MailMarkdown::escape($this->ticket->subject))
             ->line('**Priority:** '.$this->ticket->priority->getLabel())
             ->action('View & Track Ticket', $this->ticket->getPortalUrl())
             ->line('You can check status updates, respond, or attach additional files at any time via the customer portal link above.');

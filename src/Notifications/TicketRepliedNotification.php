@@ -7,20 +7,25 @@ namespace Focal\Service\Notifications;
 use Focal\Service\Models\Ticket;
 use Focal\Service\Models\TicketMessage;
 use Focal\Service\Notifications\Concerns\SetsTicketMessageId;
+use Focal\Service\Notifications\Concerns\UsesServiceNotificationQueue;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 use Illuminate\Support\Str;
 
-class TicketRepliedNotification extends Notification
+class TicketRepliedNotification extends Notification implements ShouldQueue
 {
     use Queueable;
     use SetsTicketMessageId;
+    use UsesServiceNotificationQueue;
 
     public function __construct(
         public Ticket $ticket,
         public TicketMessage $message
-    ) {}
+    ) {
+        $this->useServiceNotificationQueue();
+    }
 
     /**
      * @return array<int, string>

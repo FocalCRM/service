@@ -4,7 +4,7 @@ declare(strict_types=1);
 
 namespace Focal\Service\Http\Controllers;
 
-use Focal\Core\Models\Contact;
+use Focal\Core\Support\ContactLookup;
 use Focal\Service\Actions\CreateTicketAction;
 use Focal\Service\Actions\ReplyTicketAction;
 use Focal\Service\Enums\MessageSenderType;
@@ -44,14 +44,10 @@ class SupportPortalController extends Controller
         $firstName = $nameParts[0];
         $lastName = $nameParts[1] ?? '';
 
-        /** @var Contact $contact */
-        $contact = Contact::query()->firstOrCreate(
-            ['email' => $validated['email']],
-            [
-                'first_name' => $firstName,
-                'last_name' => $lastName,
-            ]
-        );
+        $contact = ContactLookup::findOrCreate($validated['email'], [
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+        ]);
 
         $priority = TicketPriority::tryFrom($validated['priority']) ?? TicketPriority::Medium;
 
@@ -86,6 +82,10 @@ class SupportPortalController extends Controller
 
     /**
      * Post a customer reply to the ticket thread.
+     *
+     * The page only ever shows the token's own ticket. A reply to a merged ticket is posted on
+     * its primary only when the token reached the customer by email (Ticket::portalTokenFollowsMerge());
+     * otherwise it is refused.
      */
     public function reply(Request $request, string $token, ReplyTicketAction $action): RedirectResponse
     {
@@ -98,7 +98,17 @@ class SupportPortalController extends Controller
             'body' => ['required', 'string'],
         ]);
 
-        $action->execute(
+        // A merged portal or chat ticket's token came from an unverified form, so it may not
+        // reach the primary ticket (which can hold another customer's thread). See
+        // Ticket::portalTokenFollowsMerge().
+        if ($ticket->merged_into_ticket_id !== null && ! $ticket->portalTokenFollowsMerge()) {
+            return back()->withErrors([
+                'body' => 'This ticket was merged into another ticket and no longer takes replies here. Please reply to the latest email from our support team.',
+            ]);
+        }
+
+        // Lands on the primary ticket if this one was merged, and reopens a resolved/closed ticket.
+        $message = $action->execute(
             ticket: $ticket,
             body: $validated['body'],
             senderType: MessageSenderType::Customer,
@@ -107,7 +117,11 @@ class SupportPortalController extends Controller
             isInternalNote: false
         );
 
-        return back()->with('status', 'Your reply has been posted to the ticket.');
+        $status = $message->ticket_id === $ticket->id
+            ? 'Your reply has been posted to the ticket.'
+            : "This ticket was merged into ticket #{$message->ticket->ticket_number}. Your reply has been posted there and our team will follow up.";
+
+        return back()->with('status', $status);
     }
 
     /**

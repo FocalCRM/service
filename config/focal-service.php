@@ -93,4 +93,50 @@ return [
     'inbound_email' => [
         'require_authenticated_sender' => (bool) env('FOCAL_SERVICE_INBOUND_REQUIRE_AUTH', false),
     ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Customer Replies
+    |--------------------------------------------------------------------------
+    |
+    | When true, a customer reply (inbound email, portal or chat) to a resolved
+    | or closed ticket reopens it: status becomes open and resolved_at and
+    | closed_at are cleared. When false the reply is added and the status is
+    | left alone. Replies to a merged ticket always go to its primary ticket.
+    |
+    */
+    'reopen_on_customer_reply' => (bool) env('FOCAL_SERVICE_REOPEN_ON_CUSTOMER_REPLY', true),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Chat Widget
+    |--------------------------------------------------------------------------
+    |
+    | Chat tickets are created like portal and email tickets, but the chat
+    | endpoint is public and never verifies the visitor's email address, so
+    | the "request received" email is off by default: anyone could otherwise
+    | make your app email any address. Set confirmation_email to true to
+    | send it; it carries the portal link and lets the customer continue
+    | the conversation by email after closing the widget.
+    |
+    */
+    'chat' => [
+        'confirmation_email' => (bool) env('FOCAL_SERVICE_CHAT_CONFIRMATION_EMAIL', false),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Notifications
+    |--------------------------------------------------------------------------
+    |
+    | Ticket notifications (confirmation, agent reply, resolved/CSAT and SLA
+    | breach alerts) are queued. Null uses the default queue connection and
+    | that connection's default queue. Run a worker for it, e.g.
+    | php artisan queue:work --queue=support-mail,default
+    |
+    */
+    'notifications' => [
+        'connection' => env('FOCAL_SERVICE_NOTIFICATIONS_CONNECTION'),
+        'queue' => env('FOCAL_SERVICE_NOTIFICATIONS_QUEUE'),
+    ],
 ];

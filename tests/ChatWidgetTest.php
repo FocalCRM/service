@@ -42,7 +42,8 @@ class ChatWidgetTest extends TestCase
         $ticket = Ticket::query()->where('portal_token', $token)->first();
         $this->assertNotNull($ticket);
         $this->assertSame(TicketSource::Chat, $ticket->source);
-        $this->assertSame(TicketStatus::Open, $ticket->status);
+        // Created by CreateTicketAction like other channels: New until a routing rule assigns it.
+        $this->assertSame(TicketStatus::New, $ticket->status);
 
         /** @var Contact|null $contact */
         $contact = Contact::query()->where('email', 'sarah@cyberdyne.test')->first();

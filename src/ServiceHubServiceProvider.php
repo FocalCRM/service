@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace Focal\Service;
 
+use Focal\Core\Events\CompaniesMerged;
+use Focal\Core\Events\ContactsMerged;
 use Focal\Core\Models\Company;
 use Focal\Core\Models\Contact;
+use Focal\Service\Listeners\MoveMergedRecords;
 use Focal\Service\Models\Ticket;
+use Illuminate\Support\Facades\Event;
 use Illuminate\Support\ServiceProvider;
 
 class ServiceHubServiceProvider extends ServiceProvider
@@ -44,6 +48,10 @@ class ServiceHubServiceProvider extends ServiceProvider
                 return $company->hasMany(Ticket::class, 'company_id');
             });
         }
+
+        // Synchronous on purpose: these run inside Core's merge transaction.
+        Event::listen(ContactsMerged::class, [MoveMergedRecords::class, 'handleContactsMerged']);
+        Event::listen(CompaniesMerged::class, [MoveMergedRecords::class, 'handleCompaniesMerged']);
 
         if ($this->app->runningInConsole()) {
             $this->commands([

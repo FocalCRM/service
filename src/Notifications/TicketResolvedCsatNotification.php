@@ -6,19 +6,25 @@ namespace Focal\Service\Notifications;
 
 use Focal\Service\Models\Ticket;
 use Focal\Service\Notifications\Concerns\SetsTicketMessageId;
+use Focal\Service\Notifications\Concerns\UsesServiceNotificationQueue;
+use Focal\Service\Support\MailMarkdown;
 use Illuminate\Bus\Queueable;
+use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
-class TicketResolvedCsatNotification extends Notification
+class TicketResolvedCsatNotification extends Notification implements ShouldQueue
 {
     use Queueable;
     use SetsTicketMessageId;
+    use UsesServiceNotificationQueue;
 
     public function __construct(
         public Ticket $ticket,
         public ?string $resolutionNote = null
-    ) {}
+    ) {
+        $this->useServiceNotificationQueue();
+    }
 
     /**
      * @return array<int, string>
@@ -37,7 +43,7 @@ class TicketResolvedCsatNotification extends Notification
             ->greeting('Hello,')
             ->line('Your support ticket has been marked as resolved by our customer care team.')
             ->line("**Ticket Reference:** #{$this->ticket->ticket_number}")
-            ->line("**Subject:** {$this->ticket->subject}");
+            ->line('**Subject:** '.MailMarkdown::escape($this->ticket->subject));
 
         if (! empty($this->resolutionNote)) {
             $mail->line("**Resolution Summary:** {$this->resolutionNote}");

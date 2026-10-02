@@ -5,11 +5,12 @@ declare(strict_types=1);
 namespace Focal\Service\Http\Controllers;
 
 use Focal\Core\Models\Company;
-use Focal\Core\Models\Contact;
+use Focal\Core\Support\ContactLookup;
+use Focal\Service\Actions\CreateTicketAction;
+use Focal\Service\Actions\ReplyTicketAction;
 use Focal\Service\Enums\MessageSenderType;
 use Focal\Service\Enums\TicketPriority;
 use Focal\Service\Enums\TicketSource;
-use Focal\Service\Enums\TicketStatus;
 use Focal\Service\Models\Ticket;
 use Focal\Service\Models\TicketMessage;
 use Illuminate\Http\JsonResponse;
@@ -19,9 +20,19 @@ use Illuminate\Routing\Controller;
 class ChatWidgetController extends Controller
 {
     /**
-     * Start a new live support chat session from the embedded messenger.
+     * Shown in place of the thread once the chat's ticket was merged into another ticket.
      */
-    public function start(Request $request): JsonResponse
+    public const string MERGED_NOTICE = 'This conversation has moved to another support ticket. Please check your email for updates from our support team and reply there.';
+
+    /**
+     * Start a new live support chat session from the embedded messenger.
+     *
+     * The ticket is created by CreateTicketAction like every other channel: routing rules run,
+     * and a task is logged on the contact's timeline. The confirmation email (with the portal
+     * link) is only sent when focal-service.chat.confirmation_email is true: this endpoint is
+     * public and never verifies the email address, so by default it emails nobody.
+     */
+    public function start(Request $request, CreateTicketAction $createAction): JsonResponse
     {
         $validated = $request->validate([
             'name' => ['required', 'string', 'max:255'],
@@ -34,44 +45,33 @@ class ChatWidgetController extends Controller
         $firstName = $nameParts[0];
         $lastName = $nameParts[1] ?? '';
 
-        /** @var Contact $contact */
-        $contact = Contact::query()->firstOrCreate(
-            ['email' => mb_strtolower($validated['email'])],
-            [
-                'first_name' => $firstName,
-                'last_name' => $lastName,
-                'lifecycle_stage' => 'customer',
-            ]
-        );
+        $contact = ContactLookup::findOrCreate($validated['email'], [
+            'first_name' => $firstName,
+            'last_name' => $lastName,
+            'lifecycle_stage' => 'customer',
+        ]);
 
-        $companyId = null;
+        $company = null;
         if (! empty($validated['company'])) {
             /** @var Company $company */
             $company = Company::query()->firstOrCreate(
                 ['name' => trim($validated['company'])],
                 ['lifecycle_stage' => 'customer']
             );
-            $companyId = $company->id;
             if (! $contact->isAssociatedWith($company)) {
                 $contact->associateWith($company);
             }
         }
 
-        $ticket = Ticket::create([
-            'subject' => "Live Chat inquiry from {$contact->full_name}",
-            'source' => TicketSource::Chat,
-            'status' => TicketStatus::New,
-            'priority' => TicketPriority::Medium,
-            'contact_id' => $contact->id,
-            'company_id' => $companyId,
-            'description' => $validated['message'],
-        ]);
-
-        // Customer's opening message
-        $ticket->addMessage(
-            body: $validated['message'],
-            senderType: MessageSenderType::Customer,
-            contactId: $contact->id,
+        // Seeds the customer's opening message from the description.
+        $ticket = $createAction->execute(
+            subject: "Live Chat inquiry from {$contact->full_name}",
+            description: $validated['message'],
+            priority: TicketPriority::Medium,
+            source: TicketSource::Chat,
+            contact: $contact,
+            company: $company,
+            notifyContact: (bool) config('focal-service.chat.confirmation_email', false),
         );
 
         // Automated welcoming response from support team
@@ -90,8 +90,13 @@ class ChatWidgetController extends Controller
 
     /**
      * Send a customer follow-up message in an ongoing chat session.
+     *
+     * Goes through ReplyTicketAction, so a resolved or closed ticket reopens when
+     * focal-service.reopen_on_customer_reply is on. A chat session never follows a merge: the
+     * chat's email address was never verified, so once its ticket is merged the session is
+     * read-only and the customer is pointed at their email (409, merged: true).
      */
-    public function message(Request $request, string $token): JsonResponse
+    public function message(Request $request, string $token, ReplyTicketAction $replyAction): JsonResponse
     {
         $validated = $request->validate([
             'message' => ['required', 'string'],
@@ -104,24 +109,37 @@ class ChatWidgetController extends Controller
             return response()->json(['error' => 'Chat session not found.'], 404);
         }
 
-        $ticket->addMessage(
+        if ($ticket->merged_into_ticket_id !== null) {
+            return response()->json([
+                'success' => false,
+                'merged' => true,
+                'error' => self::MERGED_NOTICE,
+                'notice' => self::MERGED_NOTICE,
+                'messages' => $this->formatMessages($ticket),
+            ], 409);
+        }
+
+        $replyAction->execute(
+            ticket: $ticket,
             body: $validated['message'],
             senderType: MessageSenderType::Customer,
-            contactId: $ticket->contact_id,
+            user: null,
+            contact: $ticket->contact,
+            isInternalNote: false,
         );
-
-        if ($ticket->status === TicketStatus::WaitingOnCustomer || $ticket->status === TicketStatus::Resolved) {
-            $ticket->update(['status' => TicketStatus::WaitingOnAgent]);
-        }
 
         return response()->json([
             'success' => true,
+            'merged' => false,
             'messages' => $this->formatMessages($ticket),
         ]);
     }
 
     /**
      * Fetch conversation thread messages for the chat widget.
+     *
+     * Always the session's own ticket: when it was merged, the response says so (merged: true
+     * plus a notice) and never shows the primary ticket, which may hold another customer's thread.
      */
     public function messages(string $token): JsonResponse
     {
@@ -132,9 +150,13 @@ class ChatWidgetController extends Controller
             return response()->json(['error' => 'Chat session not found.'], 404);
         }
 
+        $merged = $ticket->merged_into_ticket_id !== null;
+
         return response()->json([
             'ticket_number' => $ticket->ticket_number,
             'status' => $ticket->status->value,
+            'merged' => $merged,
+            'notice' => $merged ? self::MERGED_NOTICE : null,
             'messages' => $this->formatMessages($ticket),
         ]);
     }

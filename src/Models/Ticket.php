@@ -283,14 +283,17 @@ class Ticket extends Model
 
             $this->updateQuietly($updates);
         } elseif (! $isInternalNote && $senderType === MessageSenderType::Customer) {
-            // Customer replied -> transition to Open if New, WaitingOnCustomer, or Resolved
-            if ($this->status === TicketStatus::Resolved) {
-                $this->updateQuietly([
-                    'status' => TicketStatus::Open,
-                    'resolved_at' => null,
-                ]);
-                $this->status = TicketStatus::Open;
-                $this->resolved_at = null;
+            // Customer replied: New and WaitingOnCustomer become Open; Resolved and Closed are
+            // reopened when focal-service.reopen_on_customer_reply is on (the default). A ticket
+            // merged into another stays closed; replies to it belong on mergeTarget().
+            if ($this->status->isClosed()) {
+                if ($this->merged_into_ticket_id === null && (bool) config('focal-service.reopen_on_customer_reply', true)) {
+                    $this->updateQuietly([
+                        'status' => TicketStatus::Open,
+                        'resolved_at' => null,
+                        'closed_at' => null,
+                    ]);
+                }
             } elseif ($this->status === TicketStatus::WaitingOnCustomer || $this->status === TicketStatus::New) {
                 $this->updateQuietly([
                     'status' => TicketStatus::Open,
@@ -300,6 +303,47 @@ class Ticket extends Model
         }
 
         return $message;
+    }
+
+    /**
+     * Whether a customer holding this ticket's portal token may reply into the ticket it was merged into.
+     *
+     * Only when the token never left the customer's mailbox: tickets created from an inbound
+     * email, by phone, or through the API reach their contact only by email. Portal and chat
+     * tickets hand the token straight to whoever filled in the form, and that email address is
+     * never verified, so anyone could open one in another customer's name; their token stays
+     * bound to the ticket itself and never reaches (or reveals) the primary ticket.
+     */
+    public function portalTokenFollowsMerge(): bool
+    {
+        return ! in_array($this->source, [TicketSource::WebPortal, TicketSource::Chat], true);
+    }
+
+    /**
+     * The ticket that conversation on this one now belongs to.
+     *
+     * Follows merged_into_ticket_id to the end of the merge chain (a merged ticket's primary
+     * may itself have been merged since). Returns this ticket when it was never merged, and
+     * stops early at a primary that no longer exists or on a cycle.
+     */
+    public function mergeTarget(): self
+    {
+        $target = $this;
+        $seen = [$this->id => true];
+
+        while ($target->merged_into_ticket_id !== null) {
+            /** @var Ticket|null $next */
+            $next = self::query()->find($target->merged_into_ticket_id);
+
+            if ($next === null || isset($seen[$next->id])) {
+                break;
+            }
+
+            $seen[$next->id] = true;
+            $target = $next;
+        }
+
+        return $target;
     }
 
     /**

@@ -349,7 +349,10 @@
             .then(data => {
                 if (data.messages) {
                     renderMessages(data.messages);
-                    footer.style.display = 'flex';
+                    footer.style.display = data.merged ? 'none' : 'flex';
+                }
+                if (data.merged) {
+                    showMergedNotice(data.notice);
                 }
             })
             .catch(() => {});
@@ -395,8 +398,22 @@
             if (data.messages) {
                 renderMessages(data.messages);
             }
+            if (data.merged) {
+                showMergedNotice(data.notice);
+            }
         })
         .catch(err => console.error('Failed to send message:', err));
+    }
+
+    // The chat's ticket was merged into another ticket: the session is read-only from now on,
+    // and the customer carries on by email.
+    function showMergedNotice(text) {
+        const notice = document.createElement('div');
+        notice.className = 'focal-msg focal-msg-agent';
+        notice.textContent = text || 'This conversation has moved. Please check your email.';
+        messagesContainer.append(notice);
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+        footer.style.display = 'none';
     }
 
     sendBtn.addEventListener('click', sendMessage);

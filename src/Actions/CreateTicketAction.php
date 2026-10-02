@@ -20,6 +20,10 @@ class CreateTicketAction
     /**
      * Create a new support ticket and record initial activity.
      *
+     * Seeds the first customer message from the description, routes the ticket when no owner
+     * is given, logs a task on the contact's timeline and, unless $notifyContact is false,
+     * emails the contact a confirmation (TicketCreatedNotification, queued).
+     *
      * @param  array<string, mixed>  $properties
      */
     public function execute(
@@ -31,7 +35,8 @@ class CreateTicketAction
         ?Company $company = null,
         ?Model $owner = null,
         ?SlaPolicy $slaPolicy = null,
-        array $properties = []
+        array $properties = [],
+        bool $notifyContact = true
     ): Ticket {
         // Auto-link company from contact if not explicitly provided
         if ($company === null && $contact !== null && $contact->companies()->exists()) {
@@ -76,7 +81,7 @@ class CreateTicketAction
                 body: "Ticket created via {$source->label()} with {$priority->label()} priority."
             );
 
-            if (! empty($contact->email)) {
+            if ($notifyContact && ! empty($contact->email)) {
                 $contact->notify(new TicketCreatedNotification($ticket));
             }
         }

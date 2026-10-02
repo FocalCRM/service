@@ -172,4 +172,42 @@ class TicketNotificationsTest extends TestCase
             }
         );
     }
+
+    public function test_customer_controlled_text_is_not_rendered_as_markdown_in_ticket_emails(): void
+    {
+        $agent = User::factory()->create(['name' => 'Agent *Bold* [Click](https://evil.example)']);
+        $contact = Contact::factory()->create(['email' => 'victim@corp.test']);
+        $ticket = Ticket::create([
+            'subject' => "Live Chat inquiry from [Reset](https://evil.example) **now**\n\n# Urgent <b>html</b>",
+            'contact_id' => $contact->id,
+            'owner_id' => $agent->id,
+            'status' => TicketStatus::Open,
+        ]);
+        $message = $ticket->addMessage('We are looking into it.', MessageSenderType::Agent);
+
+        $mails = [
+            (new TicketCreatedNotification($ticket))->toMail($contact),
+            (new TicketRepliedNotification($ticket, $message))->toMail($contact),
+            (new TicketResolvedCsatNotification($ticket, 'Done.'))->toMail($contact),
+            (new SlaBreachAlertNotification($ticket, 'first_response'))->toMail($agent),
+        ];
+
+        foreach ($mails as $index => $mail) {
+            $html = (string) $mail->render();
+
+            $this->assertStringNotContainsString('href="https://evil.example"', $html);
+            $this->assertStringNotContainsString('<strong>now</strong>', $html);
+            $this->assertStringNotContainsString('<h1>Urgent', $html);
+            $this->assertStringNotContainsString('<b>html</b>', $html);
+
+            if ($index !== 1) {
+                // The reply email shows the subject only in its Subject header.
+                $this->assertStringContainsString('[Reset](https://evil.example) **now** # Urgent', $html);
+            }
+        }
+
+        $sla = (string) $mails[3]->render();
+        $this->assertStringNotContainsString('<em>Bold</em>', $sla);
+        $this->assertStringContainsString('Agent *Bold* [Click](https://evil.example)', $sla);
+    }
 }

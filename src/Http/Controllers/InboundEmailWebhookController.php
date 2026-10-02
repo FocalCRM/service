@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace Focal\Service\Http\Controllers;
 
 use Focal\Core\Models\Contact;
+use Focal\Core\Support\ContactLookup;
 use Focal\Service\Actions\CreateTicketAction;
 use Focal\Service\Actions\ReplyTicketAction;
 use Focal\Service\Enums\MessageSenderType;
@@ -45,6 +46,8 @@ class InboundEmailWebhookController extends Controller
             : null;
 
         if ($existingTicket !== null && $existingTicket->contact !== null) {
+            // The token and sender were checked against the referenced ticket; the reply itself
+            // lands on its merge target (the primary, if it was merged) and reopens it if needed.
             $message = $replyAction->execute(
                 ticket: $existingTicket,
                 body: $body,
@@ -56,7 +59,7 @@ class InboundEmailWebhookController extends Controller
 
             return response()->json([
                 'status' => 'appended',
-                'ticket_number' => $existingTicket->ticket_number,
+                'ticket_number' => $message->ticket->ticket_number ?? $existingTicket->ticket_number,
                 'message_id' => $message->id,
             ]);
         }
@@ -103,29 +106,18 @@ class InboundEmailWebhookController extends Controller
     }
 
     /**
-     * Find existing or create a new Contact record for the sender.
+     * Find (ignoring case and surrounding whitespace) or create the sender's Contact.
      */
     protected function resolveOrCreateContact(string $email, string $fullName): Contact
     {
-        /** @var Contact|null $contact */
-        $contact = Contact::query()->where('email', $email)->first();
-
-        if ($contact !== null) {
-            return $contact;
-        }
-
         $parts = explode(' ', trim($fullName), 2);
         $firstName = $parts[0] !== '' ? $parts[0] : 'Customer';
         $lastName = $parts[1] ?? '';
 
-        /** @var Contact $created */
-        $created = Contact::query()->create([
-            'email' => $email,
+        return ContactLookup::findOrCreate($email, [
             'first_name' => $firstName,
             'last_name' => $lastName,
         ]);
-
-        return $created;
     }
 
     /**
