@@ -344,7 +344,7 @@
     function loadMessages() {
         if (!currentToken) return;
 
-        fetch(`${API_BASE}/chat/${currentToken}/messages`)
+        fetch(`${API_BASE}/chat/${encodeURIComponent(currentToken)}/messages`)
             .then(res => res.json())
             .then(data => {
                 if (data.messages) {
@@ -356,16 +356,26 @@
     }
 
     function renderMessages(msgs) {
-        messagesContainer.innerHTML = msgs.map(m => {
-            const cls = m.is_customer ? 'focal-msg-customer' : 'focal-msg-agent';
-            return `
-                <div class="focal-msg ${cls}">
-                    <div class="focal-msg-sender">${m.sender_name}</div>
-                    <div>${escapeHtml(m.body)}</div>
-                    <div class="focal-msg-time">${m.created_at}</div>
-                </div>
-            `;
-        }).join('');
+        // Build nodes with textContent so sender names, bodies and timestamps are never parsed as HTML.
+        messagesContainer.replaceChildren(...msgs.map(m => {
+            const msg = document.createElement('div');
+            msg.className = 'focal-msg ' + (m.is_customer ? 'focal-msg-customer' : 'focal-msg-agent');
+
+            const sender = document.createElement('div');
+            sender.className = 'focal-msg-sender';
+            sender.textContent = m.sender_name;
+
+            const body = document.createElement('div');
+            body.textContent = m.body;
+
+            const time = document.createElement('div');
+            time.className = 'focal-msg-time';
+            time.textContent = m.created_at;
+
+            msg.append(sender, body, time);
+
+            return msg;
+        }));
         messagesContainer.scrollTop = messagesContainer.scrollHeight;
     }
 
@@ -375,7 +385,7 @@
 
         input.value = '';
 
-        fetch(`${API_BASE}/chat/${currentToken}/message`, {
+        fetch(`${API_BASE}/chat/${encodeURIComponent(currentToken)}/message`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ message: text })
@@ -395,10 +405,4 @@
             sendMessage();
         }
     });
-
-    function escapeHtml(str) {
-        const div = document.createElement('div');
-        div.textContent = str;
-        return div.innerHTML;
-    }
 })();

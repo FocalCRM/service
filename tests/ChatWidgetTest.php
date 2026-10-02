@@ -107,4 +107,15 @@ class ChatWidgetTest extends TestCase
                 ],
             ]);
     }
+
+    public function test_widget_script_renders_message_fields_as_text_not_html(): void
+    {
+        $script = (string) file_get_contents(__DIR__.'/../resources/js/widget.js');
+
+        // Message fields (sender_name, body, created_at) must never be interpolated into an HTML string.
+        $this->assertDoesNotMatchRegularExpression('/\$\{\s*m\.\w+/', $script);
+        $this->assertStringContainsString('sender.textContent = m.sender_name', $script);
+        $this->assertStringContainsString('body.textContent = m.body', $script);
+        $this->assertStringContainsString('encodeURIComponent(currentToken)', $script);
+    }
 }

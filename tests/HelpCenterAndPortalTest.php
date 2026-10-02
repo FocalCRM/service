@@ -163,4 +163,18 @@ class HelpCenterAndPortalTest extends TestCase
         $this->assertSame(5, $ticket->csat_rating);
         $this->assertSame('Fast, courteous, and solved on the first touch.', $ticket->csat_comment);
     }
+
+    public function test_support_form_suggestion_script_builds_dom_nodes_instead_of_html(): void
+    {
+        $response = $this->get('/support');
+
+        $response->assertSuccessful();
+        $content = (string) $response->getContent();
+
+        foreach (['title', 'category', 'excerpt', 'url', 'id'] as $field) {
+            $this->assertStringNotContainsString('${item.'.$field.'}', $content);
+        }
+        $this->assertDoesNotMatchRegularExpression('/innerHTML\s*=\s*payload/', $content);
+        $this->assertStringContainsString('link.href = safeUrl(item.url)', $content);
+    }
 }

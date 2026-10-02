@@ -37,18 +37,17 @@ class InboundEmailWebhookController extends Controller
 
         $sender = $this->parseSender($fromRaw);
 
-        // Check if incoming email references an existing ticket
-        $existingTicket = $this->findReferencedTicket($request, $subject, $body);
+        // Only thread onto a referenced ticket when the sender is that ticket's contact; anyone
+        // else gets a new ticket of their own, as if no ticket reference were present.
+        $existingTicket = $this->findReferencedTicket($request, $subject, $body, $sender['email']);
 
-        if ($existingTicket !== null) {
-            $contact = $this->resolveOrCreateContact($sender['email'], $sender['name']);
-
+        if ($existingTicket !== null && $existingTicket->contact !== null) {
             $message = $replyAction->execute(
                 ticket: $existingTicket,
                 body: $body,
                 senderType: MessageSenderType::Customer,
                 user: null,
-                contact: $contact,
+                contact: $existingTicket->contact,
                 isInternalNote: false
             );
 
@@ -127,48 +126,63 @@ class InboundEmailWebhookController extends Controller
     }
 
     /**
-     * Attempt to find an existing ticket referenced in the email subject, body, or headers.
+     * Find an existing ticket referenced in the email subject, headers, or body whose contact is the sender.
      */
-    protected function findReferencedTicket(Request $request, string $subject, string $body): ?Ticket
+    protected function findReferencedTicket(Request $request, string $subject, string $body, string $senderEmail): ?Ticket
     {
-        $prefix = preg_quote((string) config('focal-service.defaults.prefix', 'TICK'), '/');
+        $configuredPrefix = (string) config('focal-service.defaults.prefix', 'TICK');
+        $pattern = '/((?:'.preg_quote($configuredPrefix, '/').'|TICK)-\d{4}-[A-Z0-9]{4,6})/i';
 
-        // 1. Check subject for ticket number pattern (e.g. [#TICK-2026-0001] or #PREFIX-2026-0001)
-        if (preg_match('/(?:#)?((?:'.$prefix.'|TICK)-\d{4}-[A-Z0-9]{4,6})/i', $subject, $matches)) {
-            /** @var Ticket|null $ticket */
-            $ticket = Ticket::query()->where('ticket_number', strtoupper($matches[1]))->first();
-            if ($ticket !== null) {
-                return $ticket;
-            }
-        }
-
-        // 2. Check email headers (In-Reply-To or References) for ticket number
         $headers = (string) ($request->header('In-Reply-To') ?? $request->header('References') ?? $request->input('In-Reply-To') ?? $request->input('References') ?? '');
-        if ($headers !== '' && preg_match('/((?:'.$prefix.'|TICK)-\d{4}-[A-Z0-9]{4,6})/i', $headers, $hMatches)) {
-            /** @var Ticket|null $ticket */
-            $ticket = Ticket::query()->where('ticket_number', strtoupper($hMatches[1]))->first();
-            if ($ticket !== null) {
-                return $ticket;
+
+        // 1. Subject, 2. In-Reply-To / References headers, 3. body: ticket number (e.g. [#TICK-2026-AB12C]).
+        $candidates = [];
+        foreach ([$subject, $headers] as $haystack) {
+            if ($haystack !== '' && preg_match_all($pattern, $haystack, $matches)) {
+                array_push($candidates, ...array_map(fn (string $number): array => ['ticket_number', $this->normalizeTicketNumber($number, $configuredPrefix)], $matches[1]));
             }
         }
 
-        // 3. Check body for embedded portal token or ticket number signature
-        if (preg_match('/(?:portal\/|token=)([a-zA-Z0-9]{40})/i', $body, $tokenMatches)) {
-            /** @var Ticket|null $ticket */
-            $ticket = Ticket::query()->where('portal_token', $tokenMatches[1])->first();
-            if ($ticket !== null) {
-                return $ticket;
-            }
+        // Body: portal link (/support/tickets/{token}, portal/{token} or token={token}) before a ticket number.
+        if (preg_match_all('/(?:support\/tickets\/|portal\/|token=)([a-zA-Z0-9]{40})(?![a-zA-Z0-9])/i', $body, $tokenMatches)) {
+            array_push($candidates, ...array_map(fn (string $token): array => ['portal_token', $token], $tokenMatches[1]));
         }
 
-        if (preg_match('/(?:#)?((?:'.$prefix.'|TICK)-\d{4}-[A-Z0-9]{4,6})/i', $body, $bodyMatches)) {
+        if (preg_match_all($pattern, $body, $bodyMatches)) {
+            array_push($candidates, ...array_map(fn (string $number): array => ['ticket_number', $this->normalizeTicketNumber($number, $configuredPrefix)], $bodyMatches[1]));
+        }
+
+        foreach ($candidates as [$column, $value]) {
             /** @var Ticket|null $ticket */
-            $ticket = Ticket::query()->where('ticket_number', strtoupper($bodyMatches[1]))->first();
-            if ($ticket !== null) {
+            $ticket = Ticket::query()->with('contact')->where($column, $value)->first();
+
+            if ($ticket !== null && $this->isTicketContact($ticket, $senderEmail)) {
                 return $ticket;
             }
         }
 
         return null;
+    }
+
+    /**
+     * Restore a matched ticket number to its stored form: the configured prefix's case, an uppercase suffix.
+     */
+    protected function normalizeTicketNumber(string $number, string $configuredPrefix): string
+    {
+        if (stripos($number, $configuredPrefix.'-') === 0) {
+            return $configuredPrefix.strtoupper(substr($number, strlen($configuredPrefix)));
+        }
+
+        return strtoupper($number);
+    }
+
+    /**
+     * Whether the sender's email is the ticket contact's email (case-insensitive, trimmed).
+     */
+    protected function isTicketContact(Ticket $ticket, string $senderEmail): bool
+    {
+        $contactEmail = mb_strtolower(trim((string) $ticket->contact?->email));
+
+        return $contactEmail !== '' && $contactEmail === mb_strtolower(trim($senderEmail));
     }
 }

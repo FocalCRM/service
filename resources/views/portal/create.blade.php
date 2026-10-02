@@ -127,12 +127,53 @@
             const ticketForm = document.querySelector('form');
             let timeout = null;
 
+            const el = (tag, className, text) => {
+                const node = document.createElement(tag);
+                node.className = className;
+                if (text !== undefined) {
+                    node.textContent = String(text ?? '');
+                }
+                return node;
+            };
+
+            const safeUrl = (url) => {
+                try {
+                    const parsed = new URL(String(url), window.location.href);
+                    return ['http:', 'https:'].includes(parsed.protocol) ? parsed.href : '#';
+                } catch (e) {
+                    return '#';
+                }
+            };
+
+            const renderSuggestion = (item) => {
+                const card = el('div', 'bg-white rounded-lg p-3 border border-indigo-100/80 shadow-xs flex items-start justify-between gap-4');
+                const info = el('div', 'space-y-1');
+                const heading = el('div', 'flex items-center gap-2');
+
+                const category = el('span', 'px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600', item.category);
+                const link = el('a', 'text-sm font-semibold text-indigo-600 hover:text-indigo-800 underline', `${item.title ?? ''} \u2192`);
+                link.href = safeUrl(item.url);
+                link.target = '_blank';
+                link.rel = 'noopener noreferrer';
+                heading.append(category, link);
+
+                info.append(heading, el('p', 'text-xs text-slate-500 line-clamp-2', item.excerpt));
+
+                const button = el('button', 'shrink-0 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-lg border border-emerald-200 transition', '\u2713 This solved it');
+                button.type = 'button';
+                button.addEventListener('click', () => window.recordDeflection(item.id));
+
+                card.append(info, button);
+
+                return card;
+            };
+
             subjectInput.addEventListener('input', (e) => {
                 const query = e.target.value.trim();
                 clearTimeout(timeout);
                 if (query.length < 3) {
                     container.classList.add('hidden');
-                    resultsDiv.innerHTML = '';
+                    resultsDiv.replaceChildren();
                     return;
                 }
 
@@ -142,26 +183,12 @@
                         .then(payload => {
                             if (!payload.data || payload.data.length === 0) {
                                 container.classList.add('hidden');
-                                resultsDiv.innerHTML = '';
+                                resultsDiv.replaceChildren();
                                 return;
                             }
 
-                            resultsDiv.innerHTML = payload.data.map(item => `
-                                <div class="bg-white rounded-lg p-3 border border-indigo-100/80 shadow-xs flex items-start justify-between gap-4">
-                                    <div class="space-y-1">
-                                        <div class="flex items-center gap-2">
-                                            <span class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-slate-100 text-slate-600">${item.category}</span>
-                                            <a href="${item.url}" target="_blank" class="text-sm font-semibold text-indigo-600 hover:text-indigo-800 underline">
-                                                ${item.title} &rarr;
-                                            </a>
-                                        </div>
-                                        <p class="text-xs text-slate-500 line-clamp-2">${item.excerpt}</p>
-                                    </div>
-                                    <button type="button" onclick="recordDeflection(${item.id})" class="shrink-0 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 text-xs font-semibold rounded-lg border border-emerald-200 transition">
-                                        ✓ This solved it
-                                    </button>
-                                </div>
-                            `).join('');
+                            // Build nodes with textContent so article titles, categories and excerpts are never parsed as HTML.
+                            resultsDiv.replaceChildren(...payload.data.map(renderSuggestion));
                             container.classList.remove('hidden');
                         })
                         .catch(() => {});

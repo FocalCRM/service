@@ -91,4 +91,23 @@ class KnowledgeDeflectionTest extends TestCase
         $article->refresh();
         $this->assertSame(3, $article->deflections_count);
     }
+
+    public function test_knowledge_suggest_endpoint_encodes_article_url_slug(): void
+    {
+        KnowledgeArticle::create([
+            'title' => 'Webhook signature guide',
+            'slug' => 'webhook"><img src=x onerror=alert(1)>',
+            'category' => 'Developers',
+            'body' => 'Verify webhook signatures.',
+            'is_published' => true,
+        ]);
+
+        $response = $this->getJson(route('focal.service.knowledge.suggest', ['q' => 'webhook']));
+
+        $url = (string) $response->assertOk()->json('data.0.url');
+        $this->assertStringNotContainsString('"', $url);
+        $this->assertStringNotContainsString('<', $url);
+        $this->assertStringNotContainsString(' ', $url);
+        $this->assertStringContainsString('/help/webhook%22%3E%3Cimg%20src=x', $url);
+    }
 }

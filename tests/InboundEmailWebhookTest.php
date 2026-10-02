@@ -97,4 +97,127 @@ class InboundEmailWebhookTest extends TestCase
 
         $response->assertStatus(422);
     }
+
+    public function test_inbound_email_from_a_different_sender_does_not_thread_onto_the_referenced_ticket(): void
+    {
+        $customer = Contact::factory()->create(['email' => 'owner@client.test']);
+
+        $ticket = Ticket::create([
+            'ticket_number' => 'TICK-2026-OWNR1',
+            'subject' => 'Billing question',
+            'status' => TicketStatus::WaitingOnCustomer,
+            'contact_id' => $customer->id,
+        ]);
+
+        $response = $this->postJson('/api/service/inbound-email', [
+            'from' => 'Mallory <mallory@attacker.test>',
+            'subject' => 'Re: [#TICK-2026-OWNR1] Billing question',
+            'body' => "Please change the bank details. {$ticket->getPortalUrl()}",
+        ]);
+
+        $response->assertStatus(201);
+        $this->assertSame('created', $response->json('status'));
+        $this->assertNotSame('TICK-2026-OWNR1', $response->json('ticket_number'));
+
+        $ticket->refresh();
+        $this->assertSame(TicketStatus::WaitingOnCustomer, $ticket->status);
+        $this->assertCount(0, $ticket->messages);
+
+        $newTicket = Ticket::where('ticket_number', $response->json('ticket_number'))->first();
+        $this->assertNotNull($newTicket);
+        $this->assertSame('mallory@attacker.test', $newTicket->contact?->email);
+    }
+
+    public function test_inbound_email_sender_match_is_case_insensitive_and_trimmed(): void
+    {
+        $customer = Contact::factory()->create(['email' => 'Owner@Client.test']);
+
+        $ticket = Ticket::create([
+            'ticket_number' => 'TICK-2026-CASE1',
+            'subject' => 'Export failing',
+            'status' => TicketStatus::WaitingOnCustomer,
+            'contact_id' => $customer->id,
+        ]);
+
+        $response = $this->postJson('/api/service/inbound-email', [
+            'from' => 'Owner < owner@CLIENT.test >',
+            'subject' => 'Re: [#TICK-2026-CASE1] Export failing',
+            'body' => 'Still failing.',
+        ]);
+
+        $response->assertOk()->assertJson(['status' => 'appended', 'ticket_number' => 'TICK-2026-CASE1']);
+        $this->assertSame($customer->id, $ticket->messages()->sole()->contact_id);
+        $this->assertSame(1, Contact::query()->count());
+    }
+
+    public function test_inbound_email_threads_by_support_portal_link_in_body(): void
+    {
+        $customer = Contact::factory()->create(['email' => 'portal@client.test']);
+
+        $ticket = Ticket::create([
+            'subject' => 'Webhook retries',
+            'status' => TicketStatus::WaitingOnCustomer,
+            'contact_id' => $customer->id,
+        ]);
+
+        $response = $this->postJson('/api/service/inbound-email', [
+            'from' => 'portal@client.test',
+            'subject' => 'Re: your request',
+            'body' => "Thanks.\n\n> View your ticket: {$ticket->getPortalUrl()}",
+        ]);
+
+        $response->assertOk()->assertJson(['status' => 'appended', 'ticket_number' => $ticket->ticket_number]);
+    }
+
+    public function test_inbound_email_portal_link_from_a_different_sender_creates_a_new_ticket(): void
+    {
+        $customer = Contact::factory()->create(['email' => 'portal@client.test']);
+
+        $ticket = Ticket::create([
+            'subject' => 'Webhook retries',
+            'status' => TicketStatus::WaitingOnCustomer,
+            'contact_id' => $customer->id,
+        ]);
+
+        $response = $this->postJson('/api/service/inbound-email', [
+            'from' => 'someone@else.test',
+            'subject' => 'Re: your request',
+            'body' => "> View your ticket: {$ticket->getPortalUrl()}",
+        ]);
+
+        $response->assertStatus(201)->assertJsonPath('status', 'created');
+        $this->assertCount(0, $ticket->messages()->get());
+    }
+
+    public function test_inbound_email_matches_ticket_numbers_case_insensitively_against_the_configured_prefix(): void
+    {
+        config(['focal-service.defaults.prefix' => 'Acme']);
+
+        $customer = Contact::factory()->create(['email' => 'ops@client.test']);
+
+        $ticket = Ticket::create([
+            'subject' => 'Sync stalled',
+            'status' => TicketStatus::WaitingOnCustomer,
+            'contact_id' => $customer->id,
+        ]);
+
+        $this->assertStringStartsWith('Acme-', $ticket->ticket_number);
+
+        $response = $this->postJson('/api/service/inbound-email', [
+            'from' => 'ops@client.test',
+            'subject' => 'Re: ['.strtolower($ticket->ticket_number).'] Sync stalled',
+            'body' => 'Any update?',
+        ]);
+
+        $response->assertOk()->assertJson(['status' => 'appended', 'ticket_number' => $ticket->ticket_number]);
+
+        $strangerResponse = $this->postJson('/api/service/inbound-email', [
+            'from' => 'stranger@else.test',
+            'subject' => 'Re: ['.strtoupper($ticket->ticket_number).'] Sync stalled',
+            'body' => 'Any update?',
+        ]);
+
+        $strangerResponse->assertStatus(201)->assertJsonPath('status', 'created');
+        $this->assertSame(1, $ticket->messages()->count());
+    }
 }
