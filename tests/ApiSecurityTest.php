@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Odden\Service\Tests;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Odden\Service\Models\SlaPolicy;
 use Odden\Service\Models\Ticket;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ApiSecurityTest extends TestCase
 {

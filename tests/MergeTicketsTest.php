@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Odden\Service\Tests;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use InvalidArgumentException;
 use Odden\Core\Models\Contact;
 use Odden\Service\Actions\MergeTicketsAction;
 use Odden\Service\Enums\MessageSenderType;
@@ -12,8 +14,6 @@ use Odden\Service\Enums\TicketStatus;
 use Odden\Service\Models\Ticket;
 use Odden\Service\Models\TicketMessage;
 use Odden\Service\Tests\Fixtures\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use InvalidArgumentException;
 
 class MergeTicketsTest extends TestCase
 {

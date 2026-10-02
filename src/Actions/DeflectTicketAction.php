@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Odden\Service\Actions;
 
-use Odden\Service\Models\KnowledgeArticle;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Collection;
 use Illuminate\Support\Str;
+use Odden\Service\Models\KnowledgeArticle;
 
 class DeflectTicketAction
 {

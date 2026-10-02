@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Odden\Service\Actions;
 
+use Illuminate\Database\Eloquent\Model;
 use Odden\Core\Models\Company;
 use Odden\Core\Models\Contact;
 use Odden\Service\Enums\MessageSenderType;
@@ -13,7 +14,6 @@ use Odden\Service\Enums\TicketStatus;
 use Odden\Service\Models\SlaPolicy;
 use Odden\Service\Models\Ticket;
 use Odden\Service\Notifications\TicketCreatedNotification;
-use Illuminate\Database\Eloquent\Model;
 
 class CreateTicketAction
 {

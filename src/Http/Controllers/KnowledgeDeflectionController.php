@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Odden\Service\Http\Controllers;
 
-use Odden\Service\Actions\DeflectTicketAction;
-use Odden\Service\Models\KnowledgeArticle;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
+use Odden\Service\Actions\DeflectTicketAction;
+use Odden\Service\Models\KnowledgeArticle;
 
 class KnowledgeDeflectionController extends Controller
 {

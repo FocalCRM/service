@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Odden\Service\Models;
 
 use Carbon\CarbonInterface;
-use Odden\Service\Enums\TicketPriority;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Carbon;
+use Odden\Service\Enums\TicketPriority;
 
 /**
  * @property int $id

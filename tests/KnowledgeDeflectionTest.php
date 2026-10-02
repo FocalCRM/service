@@ -4,9 +4,9 @@ declare(strict_types=1);
 
 namespace Odden\Service\Tests;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Odden\Service\Actions\DeflectTicketAction;
 use Odden\Service\Models\KnowledgeArticle;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class KnowledgeDeflectionTest extends TestCase
 {

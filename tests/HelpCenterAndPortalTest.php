@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace Odden\Service\Tests;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Odden\Core\Models\Contact;
 use Odden\Service\Enums\TicketPriority;
 use Odden\Service\Enums\TicketStatus;
 use Odden\Service\Models\KnowledgeArticle;
 use Odden\Service\Models\SlaPolicy;
 use Odden\Service\Models\Ticket;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class HelpCenterAndPortalTest extends TestCase
 {

@@ -4,11 +4,11 @@ declare(strict_types=1);
 
 namespace Odden\Service\Http\Controllers;
 
-use Odden\Service\Models\KnowledgeArticle;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controller;
 use Illuminate\View\View;
+use Odden\Service\Models\KnowledgeArticle;
 
 class HelpCenterController extends Controller
 {

@@ -5,11 +5,11 @@ declare(strict_types=1);
 namespace Odden\Service\Tests;
 
 use Carbon\Carbon;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Odden\Service\Enums\TicketPriority;
 use Odden\Service\Enums\TicketStatus;
 use Odden\Service\Models\SlaPolicy;
 use Odden\Service\Models\Ticket;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class BusinessHoursSlaTest extends TestCase
 {

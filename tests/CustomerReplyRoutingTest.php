@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Odden\Service\Tests;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\TestResponse;
 use Odden\Core\Models\Contact;
 use Odden\Service\Actions\MergeTicketsAction;
 use Odden\Service\Actions\ReplyTicketAction;
@@ -13,8 +15,6 @@ use Odden\Service\Enums\TicketStatus;
 use Odden\Service\Models\Ticket;
 use Odden\Service\Models\TicketMessage;
 use Odden\Service\Notifications\Concerns\SetsTicketMessageId;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Testing\TestResponse;
 
 /**
  * Issue #16: customer replies reopen resolved/closed tickets, and replies to a merged ticket

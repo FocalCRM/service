@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Odden\Service\Tests;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Odden\Core\Models\Company;
 use Odden\Core\Models\Contact;
 use Odden\Service\Enums\TicketSource;
 use Odden\Service\Enums\TicketStatus;
 use Odden\Service\Models\Ticket;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ChatWidgetTest extends TestCase
 {

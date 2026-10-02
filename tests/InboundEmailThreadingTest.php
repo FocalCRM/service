@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Odden\Service\Tests;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Mail\Transport\ArrayTransport;
+use Illuminate\Support\Facades\Mail;
 use Odden\Core\Models\Contact;
 use Odden\Service\Actions\CreateTicketAction;
 use Odden\Service\Actions\ReplyTicketAction;
@@ -13,9 +16,6 @@ use Odden\Service\Enums\TicketStatus;
 use Odden\Service\Models\SlaPolicy;
 use Odden\Service\Models\Ticket;
 use Odden\Service\Tests\Fixtures\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Mail\Transport\ArrayTransport;
-use Illuminate\Support\Facades\Mail;
 use Symfony\Component\Mailer\SentMessage;
 use Symfony\Component\Mime\Email;
 

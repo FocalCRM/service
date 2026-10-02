@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Odden\Service\Database\Seeders;
 
+use Illuminate\Database\Seeder;
 use Odden\Core\Models\Company;
 use Odden\Core\Models\Contact;
 use Odden\Core\Support\UserModel;
@@ -16,7 +17,6 @@ use Odden\Service\Models\KnowledgeArticle;
 use Odden\Service\Models\SlaPolicy;
 use Odden\Service\Models\Ticket;
 use Odden\Service\Models\TicketRoutingRule;
-use Illuminate\Database\Seeder;
 
 class ServiceDatabaseSeeder extends Seeder
 {

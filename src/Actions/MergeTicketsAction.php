@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Odden\Service\Actions;
 
+use Illuminate\Support\Facades\DB;
+use InvalidArgumentException;
 use Odden\Service\Enums\MessageSenderType;
 use Odden\Service\Enums\TicketStatus;
 use Odden\Service\Models\Ticket;
 use Odden\Service\Models\TicketMessage;
-use Illuminate\Support\Facades\DB;
-use InvalidArgumentException;
 
 class MergeTicketsAction
 {

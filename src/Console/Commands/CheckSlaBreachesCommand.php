@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Odden\Service\Console\Commands;
 
-use Odden\Service\Actions\CheckSlaBreachesAction;
 use Illuminate\Console\Command;
+use Odden\Service\Actions\CheckSlaBreachesAction;
 
 class CheckSlaBreachesCommand extends Command
 {

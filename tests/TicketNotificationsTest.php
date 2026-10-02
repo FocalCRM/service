@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Odden\Service\Tests;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Odden\Core\Models\Contact;
 use Odden\Service\Actions\CheckSlaBreachesAction;
 use Odden\Service\Actions\CreateTicketAction;
@@ -18,8 +20,6 @@ use Odden\Service\Notifications\TicketCreatedNotification;
 use Odden\Service\Notifications\TicketRepliedNotification;
 use Odden\Service\Notifications\TicketResolvedCsatNotification;
 use Odden\Service\Tests\Fixtures\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Notification;
 
 class TicketNotificationsTest extends TestCase
 {

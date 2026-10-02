@@ -2,6 +2,7 @@
 
 declare(strict_types=1);
 
+use Illuminate\Support\Facades\Route;
 use Odden\Core\Http\Middleware\RequireApiToken;
 use Odden\Core\Support\CsrfExemption;
 use Odden\Core\Support\RouteGroup;
@@ -10,7 +11,6 @@ use Odden\Service\Http\Controllers\HelpCenterController;
 use Odden\Service\Http\Controllers\InboundEmailWebhookController;
 use Odden\Service\Http\Controllers\KnowledgeDeflectionController;
 use Odden\Service\Http\Controllers\SupportPortalController;
-use Illuminate\Support\Facades\Route;
 
 Route::group(RouteGroup::attributes('odden-service.routes.web'), function (): void {
     // Knowledge Base / Help Center

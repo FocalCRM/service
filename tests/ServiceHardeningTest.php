@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Odden\Service\Tests;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Odden\Core\Enums\ActivityType;
 use Odden\Core\Models\Activity;
 use Odden\Core\Models\Contact;
@@ -17,7 +18,6 @@ use Odden\Service\Models\CannedResponse;
 use Odden\Service\Models\SlaPolicy;
 use Odden\Service\Models\Ticket;
 use Odden\Service\Tests\Fixtures\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ServiceHardeningTest extends TestCase
 {

@@ -4,6 +4,8 @@ declare(strict_types=1);
 
 namespace Odden\Service\Tests;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Notification;
 use Odden\Core\Enums\ActivityType;
 use Odden\Core\Models\Contact;
 use Odden\Service\Enums\TicketSource;
@@ -12,8 +14,6 @@ use Odden\Service\Models\Ticket;
 use Odden\Service\Models\TicketRoutingRule;
 use Odden\Service\Notifications\TicketCreatedNotification;
 use Odden\Service\Tests\Fixtures\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Notification;
 
 /**
  * Issue #15: chat-started tickets go through CreateTicketAction like every other channel.

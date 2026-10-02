@@ -4,6 +4,10 @@ declare(strict_types=1);
 
 namespace Odden\Service\Http\Controllers;
 
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
+use Illuminate\View\View;
 use Odden\Core\Support\ContactLookup;
 use Odden\Service\Actions\CreateTicketAction;
 use Odden\Service\Actions\ReplyTicketAction;
@@ -11,10 +15,6 @@ use Odden\Service\Enums\MessageSenderType;
 use Odden\Service\Enums\TicketPriority;
 use Odden\Service\Enums\TicketSource;
 use Odden\Service\Models\Ticket;
-use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
-use Illuminate\View\View;
 
 class SupportPortalController extends Controller
 {

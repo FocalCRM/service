@@ -4,10 +4,10 @@ declare(strict_types=1);
 
 namespace Odden\Service\Listeners;
 
-use Odden\Core\Events\CompaniesMerged;
-use Odden\Core\Events\ContactsMerged;
 use Illuminate\Support\Facades\DB;
 use InvalidArgumentException;
+use Odden\Core\Events\CompaniesMerged;
+use Odden\Core\Events\ContactsMerged;
 
 /**
  * Moves the Service records keyed to a merged-away contact or company onto the record it was

@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace Odden\Service\Http\Controllers;
 
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
+use Illuminate\Routing\Controller;
 use Odden\Core\Models\Company;
 use Odden\Core\Support\ContactLookup;
 use Odden\Service\Actions\CreateTicketAction;
@@ -13,9 +16,6 @@ use Odden\Service\Enums\TicketPriority;
 use Odden\Service\Enums\TicketSource;
 use Odden\Service\Models\Ticket;
 use Odden\Service\Models\TicketMessage;
-use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
-use Illuminate\Routing\Controller;
 
 class ChatWidgetController extends Controller
 {

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Odden\Service;
 
+use Illuminate\Support\Facades\Event;
+use Illuminate\Support\ServiceProvider;
 use Odden\Core\Events\CompaniesMerged;
 use Odden\Core\Events\ContactsMerged;
 use Odden\Core\Models\Company;
 use Odden\Core\Models\Contact;
 use Odden\Service\Listeners\MoveMergedRecords;
 use Odden\Service\Models\Ticket;
-use Illuminate\Support\Facades\Event;
-use Illuminate\Support\ServiceProvider;
 
 class ServiceHubServiceProvider extends ServiceProvider
 {

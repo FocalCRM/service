@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 namespace Odden\Service\Notifications\Concerns;
 
-use Odden\Service\Models\Ticket;
 use Illuminate\Notifications\Messages\MailMessage;
+use Odden\Service\Models\Ticket;
 use Symfony\Component\Mime\Email;
 
 /**

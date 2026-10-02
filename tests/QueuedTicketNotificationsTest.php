@@ -4,6 +4,14 @@ declare(strict_types=1);
 
 namespace Odden\Service\Tests;
 
+use Illuminate\Contracts\Queue\ShouldQueue;
+use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Mail\Transport\ArrayTransport;
+use Illuminate\Notifications\ChannelManager;
+use Illuminate\Notifications\SendQueuedNotifications;
+use Illuminate\Support\Facades\Mail;
+use Illuminate\Support\Facades\Notification;
+use Illuminate\Support\Facades\Queue;
 use Odden\Core\Models\Contact;
 use Odden\Service\Actions\CreateTicketAction;
 use Odden\Service\Actions\ReplyTicketAction;
@@ -14,14 +22,6 @@ use Odden\Service\Notifications\TicketCreatedNotification;
 use Odden\Service\Notifications\TicketRepliedNotification;
 use Odden\Service\Notifications\TicketResolvedCsatNotification;
 use Odden\Service\Tests\Fixtures\User;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Mail\Transport\ArrayTransport;
-use Illuminate\Notifications\ChannelManager;
-use Illuminate\Notifications\SendQueuedNotifications;
-use Illuminate\Support\Facades\Mail;
-use Illuminate\Support\Facades\Notification;
-use Illuminate\Support\Facades\Queue;
 use Symfony\Component\Mime\Email;
 
 /**

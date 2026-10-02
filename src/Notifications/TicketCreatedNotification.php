@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Odden\Service\Notifications;
 
-use Odden\Service\Models\Ticket;
-use Odden\Service\Notifications\Concerns\SetsTicketMessageId;
-use Odden\Service\Notifications\Concerns\UsesServiceNotificationQueue;
-use Odden\Service\Support\MailMarkdown;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Odden\Service\Models\Ticket;
+use Odden\Service\Notifications\Concerns\SetsTicketMessageId;
+use Odden\Service\Notifications\Concerns\UsesServiceNotificationQueue;
+use Odden\Service\Support\MailMarkdown;
 
 class TicketCreatedNotification extends Notification implements ShouldQueue
 {

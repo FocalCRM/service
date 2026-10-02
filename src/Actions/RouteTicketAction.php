@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Odden\Service\Actions;
 
+use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Odden\Core\Support\UserModel;
 use Odden\Service\Enums\TicketStatus;
 use Odden\Service\Models\Ticket;
 use Odden\Service\Models\TicketRoutingRule;
-use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Database\Eloquent\Model;
 
 class RouteTicketAction
 {

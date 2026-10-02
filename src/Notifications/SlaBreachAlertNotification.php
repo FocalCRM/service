@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace Odden\Service\Notifications;
 
-use Odden\Core\Support\UserModel;
-use Odden\Service\Models\Ticket;
-use Odden\Service\Notifications\Concerns\UsesServiceNotificationQueue;
-use Odden\Service\Support\MailMarkdown;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
+use Odden\Core\Support\UserModel;
+use Odden\Service\Models\Ticket;
+use Odden\Service\Notifications\Concerns\UsesServiceNotificationQueue;
+use Odden\Service\Support\MailMarkdown;
 
 class SlaBreachAlertNotification extends Notification implements ShouldQueue
 {

@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace Odden\Service\Actions;
 
+use Illuminate\Database\Eloquent\Model;
 use Odden\Core\Models\Contact;
 use Odden\Service\Enums\MessageSenderType;
 use Odden\Service\Models\Ticket;
 use Odden\Service\Models\TicketMessage;
 use Odden\Service\Notifications\TicketRepliedNotification;
-use Illuminate\Database\Eloquent\Model;
 
 class ReplyTicketAction
 {

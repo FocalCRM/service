@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Odden\Service\Tests;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Odden\Core\Models\Company;
 use Odden\Core\Models\Contact;
 use Odden\Service\Actions\CreateTicketAction;
@@ -16,7 +17,6 @@ use Odden\Service\Enums\TicketStatus;
 use Odden\Service\Models\SlaPolicy;
 use Odden\Service\Models\Ticket;
 use Odden\Service\Tests\Fixtures\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class TicketTest extends TestCase
 {
